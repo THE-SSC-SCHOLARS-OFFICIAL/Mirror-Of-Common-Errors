@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conjunctions Mock Test - THE SSC SCHOLARS</title>
+<style>
+    :root { --blue: #007bff; --green: #0acf83; --red: #f25050; --bg: #f2f3f5; }
+    * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body { margin: 0; background: var(--bg); height: 100vh; display: flex; flex-direction: column; }
+
+    header { background: #fff; padding: 0 20px; height: 60px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
+    .logo { font-weight: 800; color: #333; }
+    .timer { background: #eef2f8; padding: 5px 10px; border-radius: 4px; font-weight: bold; }
+    .submit { background: var(--green); color: white; border: none; padding: 8px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+
+    .container { display: flex; flex: 1; overflow: hidden; }
+    .q-panel { flex: 1; background: #fff; margin: 15px; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    
+    .q-header { padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; font-weight: bold; }
+    .q-body { flex: 1; padding: 20px; overflow-y: auto; }
+    .q-text { font-size: 1.15rem; margin-bottom: 20px; line-height: 1.6; color: #2d3748; }
+    .marker { color: var(--blue); font-weight: bold; background: #ebf8ff; padding: 2px 5px; border-radius: 4px; font-size: 0.9em; margin: 0 2px; }
+
+    .opts { display: flex; flex-direction: column; gap: 10px; }
+    .opt { display: flex; align-items: center; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+    .opt:hover { background: #f7fafc; border-color: #cbd5e0; }
+    .opt.selected { border-color: var(--blue); background: #ebf8ff; }
+    .circle { width: 18px; height: 18px; border: 2px solid #a0aec0; border-radius: 50%; margin-right: 15px; position: relative; }
+    .opt.selected .circle { border-color: var(--blue); }
+    .opt.selected .circle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 8px; height: 8px; background: var(--blue); border-radius: 50%; }
+
+    .sol-box { margin-top: 20px; background: #ebf8ff; border: 1px solid #bee3f8; border-radius: 6px; padding: 15px; display: none; }
+    .sol-title { font-weight: bold; color: #2b6cb0; margin-bottom: 5px; }
+
+    .footer { padding: 15px; border-top: 1px solid #eee; display: flex; justify-content: space-between; }
+    .btn { padding: 8px 20px; border: 1px solid #ccc; background: white; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    .btn-save { background: var(--blue); color: white; border: none; }
+
+    .sidebar { width: 280px; background: white; border-left: 1px solid #ddd; display: flex; flex-direction: column; }
+    .pal-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; overflow-y: auto; }
+    .pal-btn { height: 35px; border: 1px solid #ddd; background: white; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #555; }
+    .pal-btn.active { border-color: var(--blue); color: var(--blue); border-width: 2px; }
+    .pal-btn.done { background: var(--green); color: white; border-color: var(--green); }
+
+    #start { position: fixed; inset: 0; background: rgba(255,255,255,0.98); z-index: 100; display: flex; align-items: center; justify-content: center; }
+    .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 400px; text-align: center; border: 1px solid #ddd; }
+    .start-btn { width: 100%; padding: 15px; margin: 10px 0; background: white; border: 2px solid var(--blue); color: var(--blue); font-weight: bold; border-radius: 8px; cursor: pointer; text-align: left; }
+    .start-btn:hover { background: var(--blue); color: white; }
+
+    @media(max-width:768px) { .sidebar{display:none;} .container{flex-direction:column;} }
+</style>
+</head>
+<body>
+
+<div id="start">
+    <div class="card">
+        <h2>Chapter 10: Conjunctions</h2>
+        <p>Mirror of Common English</p>
+        <button class="start-btn" onclick="start(1)">Set 1 (Q1-25)</button>
+        <button class="start-btn" onclick="start(2)">Set 2 (Q26-51)</button>
+    </div>
+</div>
+
+<header>
+    <div class="logo">THE SSC SCHOLARS OFFICIAL</div>
+    <div class="timer" id="time">15:00</div>
+    <button class="submit" onclick="submit()">SUBMIT</button>
+</header>
+
+<div class="container">
+    <div class="q-panel">
+        <div class="q-header">
+            <span id="q-idx">Q1</span>
+            <span>+1.0 / -0.25</span>
+        </div>
+        <div class="q-body">
+            <div class="q-text" id="q-txt"></div>
+            <div class="opts" id="opts"></div>
+            <div class="sol-box" id="sol">
+                <div class="sol-title">Solution</div>
+                <div id="sol-txt"></div>
+            </div>
+        </div>
+        <div class="footer">
+            <button class="btn" onclick="nav(-1)">Prev</button>
+            <button class="btn btn-save" onclick="nav(1)">Save & Next</button>
+        </div>
+    </div>
+    <div class="sidebar">
+        <div style="padding:15px;border-bottom:1px solid #eee;font-weight:bold">Questions</div>
+        <div class="pal-grid" id="pal"></div>
+    </div>
+</div>
+
+<script>
+const db = [
+    // SET 1 (Q1-25)
+    { t: "He was not (A) / so well versed in (B) / English that we (C) / had expected. (D) / No Error (E)", a: 2, s: "Part (C): 'that' के बदले 'as' का प्रयोग होगा। 'So...as' का प्रयोग तुलना (Comparison) के लिए होता है। (He was not so well versed... as we had expected)." },
+    { t: "Mrs. Varun (A) / not only stopped coming (B) / here but also (C) / going to any place which is related to her past tragedy. (D) / No Error (E)", a: 1, s: "Part (B): 'not only' का स्थान 'coming' के पहले होना चाहिए। वाक्य में 'coming' और 'going' (दो Gerunds) की तुलना है। सही: 'Mrs. Varun stopped not only coming here but also going to...'" },
+    { t: "Nobody else but (A) / you might be declared (B) / responsible for the (C) / loss of those articles. (D) / No Error (E)", a: 4, s: "No Error. 'Else' के बाद 'but' का प्रयोग सही है। (Nothing else but, Nobody else but)." },
+    { t: "The teacher said (A) / to the students, 'Go through the (B) / notes as many times as possible (C) / lest you would fail.' (D) / No Error (E)", a: 3, s: "Part (D): 'would' के बदले 'should' का प्रयोग होगा। 'Lest' के साथ हमेशा 'Should' का प्रयोग होता है।" },
+    { t: "Seldom or (A) / ever have I tried my (B) / best to defend my (C) / friends, who are after all guilty to some extent. (D) / No Error (E)", a: 1, s: "Part (B): 'ever' के बदले 'never' होगा। सही मुहावरा 'Seldom or never' (शायद ही कभी या कभी नहीं) है। 'Seldom if ever' भी सही है।" },
+    { t: "Seldom or (A) / ever have I turned (B) / a beggar away without (C) / giving him some alms. (D) / No Error (E)", a: 1, s: "Part (B): 'ever' के बदले 'never' होगा। (Seldom or never)।" },
+    { t: "The officer was doubtful (A) / if some of the clerks (B) / of his office were (C) / involved in bribery. (D) / No Error (E)", a: 4, s: "No Error. Affirmative वाक्य में Doubt/Doubtful के बाद 'if' या 'whether' का प्रयोग सही है। (Negative में 'that' आता है)।" },
+    { t: "Neither the doctor (A) / nor his assistants (B) / were asleep when (C) / the phone rang up. (D) / No Error (E)", a: 4, s: "No Error. Neither...nor में Verb नजदीक वाले Subject (assistants - Plural) के अनुसार 'were' सही है।" },
+    { t: "Because he has been ill for a month (A) / so he does not (B) / come to the office. (C) / No Error (D) (E)", a: 1, s: "Part (B): 'so' का प्रयोग नहीं होगा। Because, As, Since आदि कारण बताने वाले शब्दों के साथ So/Therefore का प्रयोग नहीं होता।" },
+    { t: "You must either (A) / inform the police (B) / else be prepared (C) / to suffer any loss. (D) / No Error (E)", a: 2, s: "Part (C): 'else' के बदले 'or' का प्रयोग होगा। Either के साथ Or का जोड़ा बनता है (Either... or)।" },
+    { t: "As soon as the peon (A) / rings the first bell, then all (B) / the students assemble (C) / on the ground for prayer. (D) / No Error (E)", a: 1, s: "Part (B): 'then' का प्रयोग नहीं होगा। As soon as के साथ 'comma (,)' का प्रयोग होता है, then/than का नहीं।" },
+    { t: "He not only comes (A) / here for shopping but also for (B) / having a glimpse of (C) / the extremely beautiful sales girl. (D) / No Error (E)", a: 0, s: "Part (A): 'He not only comes' के बदले 'He comes not only' होगा। 'for shopping' और 'for having a glimpse' को जोड़ा जा रहा है। Not only का प्रयोग 'for shopping' के ठीक पहले होना चाहिए।" },
+    { t: "Hardly had he (A) / come out of the bus (B) / then the bomb (C) / exploded and shattered the bus into pieces. (D) / No Error (E)", a: 2, s: "Part (C): 'then' के बदले 'when' होगा। Hardly/Scarcely के साथ 'when' या 'before' का प्रयोग होता है।" },
+    { t: "Scarcely had he bought (A) / the ticket when the guard (B) / showed the flag and (C) / the train started. (D) / No Error (E)", a: 4, s: "No Error. Scarcely... when का प्रयोग सही है।" },
+    { t: "I don't know if any of the members (A) / of the party is (B) / conspiring (C) / against the President or not. (D) / No Error (E)", a: 0, s: "Part (A): 'if' के बदले 'whether' का प्रयोग होगा। जब वाक्य के अंत में 'or not' हो, तो 'whether' का प्रयोग अनिवार्य है।" },
+    { t: "Many of the founding fathers (A) / of our constitution are (B) / so reverend as Ambedkar (C) / if not more. (D) / No Error (E)", a: 2, s: "Part (C): 'so reverend as' के बदले 'as reverend as' होगा। Affirmative (सकारात्मक) वाक्यों में as...as का प्रयोग होता है, जबकि so...as का प्रयोग Negative में होता है।" },
+    { t: "This is not such (A) / major problem (B) / which cannot be (C) / solved with a little effort. (D) / No Error (E)", a: 2, s: "Part (C): 'which' के बदले 'as' का प्रयोग होगा। 'Such' के बाद Relative Pronoun के रूप में 'as' आता है (Such... as)।" },
+    { t: "This is perhaps (A) / the same dog which (B) / bit her while she (C) / was returning from market. (D) / No Error (E)", a: 1, s: "Part (B): 'which' के बदले 'that' होगा। 'The same' के बाद Relative Pronoun 'that' का प्रयोग होता है।" },
+    { t: "He asked me (A) / that why I was (B) / not preparing for the (C) / Civil Service Examinations. (D) / No Error (E)", a: 1, s: "Part (B): 'that' का प्रयोग नहीं होगा। Interrogative words (Why, When, Where etc.) के पहले 'that' नहीं लगता (Indirect Speech)।" },
+    { t: "Both Hari (A) / as well as his wife (B) / are determined to bring (C) / about some changes in the plan. (D) / No Error (E)", a: 1, s: "Part (B): 'as well as' के बदले 'and' का प्रयोग होगा। Both के साथ 'and' का जोड़ा बनता है (Both... and)।" },
+    { t: "As he is (A) / a perfectionist, (B) / so he always insists (C) / on regular practice. (D) / No Error (E)", a: 2, s: "Part (C): 'so' का प्रयोग नहीं होगा। As के साथ So का प्रयोग वर्जित है (सिर्फ comma लगता है)।" },
+    { t: "Although these books (A) / are not useful but (B) / the students buy them (C) / because their seniors did so. (D) / No Error (E)", a: 1, s: "Part (B): 'but' के बदले 'yet' का प्रयोग होगा। Although/Though के साथ Yet का प्रयोग होता है।" },
+    { t: "He did not (A) / succeed in the examination, (B) / yet he (C) / had worked hard and had adopted the right strategy. (D) / No Error (E)", a: 2, s: "Part (C): 'yet' के बदले 'although' का प्रयोग होगा। वाक्य का अर्थ है 'यद्यपि उसने कड़ी मेहनत की थी...'।" },
+    { t: "He has (A) / lots of money (B) / and he (C) / will not help anyone. (D) / No Error (E)", a: 2, s: "Part (C): 'and' के बदले 'but' का प्रयोग होगा। (Contrast: पैसा है लेकिन मदद नहीं करेगा)।" },
+    { t: "Because he is (A) / physically strong, (B) / therefore he was selected (C) / for the school boxing team. (D) / No Error (E)", a: 2, s: "Part (C): 'therefore' का प्रयोग नहीं होगा। Because के साथ Therefore नहीं लगता।" },
+
+    // SET 2 (Q26-51)
+    { t: "The reason why (A) / he was rejected (B) / was because he was (C) / too young. (D) / No Error (E)", a: 2, s: "Part (C): 'because' के बदले 'that' का प्रयोग होगा। 'The reason why' के साथ 'that' का प्रयोग होता है।" },
+    { t: "Unless you do not (A) / give up your bad habits (B) / you will suffer. (C) / No Error (D) (E)", a: 0, s: "Part (A): 'do not' का प्रयोग नहीं होगा। Unless खुद Negative है।" },
+    { t: "Neither the old man (A) / nor his children (B) / knows about the (C) / incident. (D) / No Error (E)", a: 2, s: "Part (C): 'knows' के बदले 'know' होगा। Neither..nor में Verb नजदीक वाले Subject (children - Plural) के अनुसार होगा।" },
+    { t: "Scarcely had he (A) / gone a few steps (B) / that he was told (C) / by someone that his mother was no more. (D) / No Error (E)", a: 2, s: "Part (C): 'that' के बदले 'when' का प्रयोग होगा। Scarcely के साथ When आता है।" },
+    { t: "No sooner did (A) / I open the door (B) / when the rain, heavy and stormy, (C) / rushed in making us shiver. (D) / No Error (E)", a: 2, s: "Part (C): 'when' के बदले 'than' का प्रयोग होगा। No sooner...than." },
+    { t: "Be smart (A) / not only in dress (B) / and also in action (C) / and thought. (D) / No Error (E)", a: 2, s: "Part (C): 'and also' के बदले 'but also' का प्रयोग होगा। Not only... but also." },
+    { t: "Hardly had I (A) / reached the airport (B) / where I learnt (C) / about the powerful bomb explosion. (D) / No Error (E)", a: 2, s: "Part (C): 'where' के बदले 'when' का प्रयोग होगा। Hardly...when." },
+    { t: "The doctor gives (A) / medicines not only (B) / to the rich patients (C) / but also to the poor ones. (D) / No Error (E)", a: 1, s: "Part (B): 'not only' का प्रयोग 'to the rich patients' के पहले (Part C के शुरुआत में) होना चाहिए। सही: gives medicines to not only the rich..." },
+    { t: "He has lots (A) / of money and (B) / he dare not start (C) / a factory. (D) / No Error (E)", a: 1, s: "Part (B): 'and' के बदले 'but' का प्रयोग होगा। (Contrast)।" },
+    { t: "The newsman was doubtful (A) / that the man who had been (B) / run over by some vehicles had lain (C) / there for more than one day. (D) / No Error (E)", a: 1, s: "Part (B): 'that' के बदले 'whether' का प्रयोग होगा। Doubtful (Affirmative) के साथ Whether लगता है।" },
+    { t: "Because he is intelligent, (A) / therefore he gets good (B) / marks in all the (C) / examinations he takes. (D) / No Error (E)", a: 1, s: "Part (B): 'therefore' का प्रयोग नहीं होगा। Because के साथ Therefore नहीं लगता।" },
+    { t: "Both the rich along with (A) / the poor are responsible for a (B) / great many vices with which our society (C) / as well as country is inflicted. (D) / No Error (E)", a: 0, s: "Part (A): 'along with' के बदले 'and' का प्रयोग होगा। Both...and." },
+    { t: "His offence was such (A) / as he was bound to suffer (B) / and ultimately (C) / meet his doom. (D) / No Error (E)", a: 1, s: "Part (B): 'as' के बदले 'that' का प्रयोग होगा। 'Such...that' (Result/Effect)।" },
+    { t: "She was too beautiful (A) / to be (B) / rejected by any (C) / youngman who wished to make her his wife. (D) / No Error (E)", a: 4, s: "No Error. Too...to का प्रयोग सही है।" },
+    { t: "Since Diwali is fast approaching, (A) / my teenager son has bought many fireworks (B) / as rockets, crackers, etc. (C) / all of which cost much. (D) / No Error (E)", a: 2, s: "Part (C): 'as' के बदले 'like' का प्रयोग होगा। (उदाहरण देने के लिए Like)।" },
+    { t: "Scarcely had he gone (A) / than a policeman knocked (B) / at the door to enquire (C) / about his whereabouts. (D) / No Error (E)", a: 1, s: "Part (B): 'than' के बदले 'when' का प्रयोग होगा। Scarcely...when." },
+    { t: "No sooner had the train (A) / arrived then the crowd rushed (B) / towards the compartment to greet the leader (C) / who was travelling by that train. (D) / No Error (E)", a: 1, s: "Part (B): 'then' के बदले 'than' का प्रयोग होगा। No sooner...than." },
+    { t: "Hardly had the wheels touched (A) / the ground than the pilot (B) / indicated with his fingers how many (C) / injured people he was carrying. (D) / No Error (E)", a: 1, s: "Part (B): 'than' के बदले 'when' का प्रयोग होगा। Hardly...when." },
+    { t: "No sooner was the agitation (A) / in Darjeeling silenced, (B) / the Bodo Land activity (C) / in Assam erupted. (D) / No Error (E)", a: 2, s: "Part (C): 'the' के पहले 'than' का प्रयोग होगा। No sooner...than." },
+    { t: "I cannot confirm (A) / you if he (B) / has paid the bill (C) / or not. (D) / No Error (E)", a: 1, s: "Part (B): 'if' के बदले 'whether' का प्रयोग होगा। 'or not' के साथ Whether लगता है।" },
+    { t: "Ten years have passed (A) / that I returned from (B) / America and settled (C) / in India. (D) / No Error (E)", a: 1, s: "Part (B): 'that' के बदले 'since' का प्रयोग होगा। (Time clause)।" },
+    { t: "It was almost (A) / ten years ago (B) / since he wrote (C) / a letter to me enquiring about my well being. (D) / No Error (E)", a: 2, s: "Part (C): 'since' के बदले 'that' का प्रयोग होगा। Ago के साथ That लगता है।" },
+    { t: "The patient would not (A) / have died (B) / when the doctor had (C) / come in time. (D) / No Error (E)", a: 2, s: "Part (C): 'when' के बदले 'if' का प्रयोग होगा। (Conditional Sentence)।" },
+    { t: "The programme was (A) / almost fixed (B) / and it was my friend's insincerity that upset the whole thing (C) / and disappointed us. (D) / No Error (E)", a: 1, s: "Part (B): 'and' के बदले 'but' का प्रयोग होगा। (Contrast)।" },
+    { t: "He did not (A) / succeed in the examination, (B) / yet he (C) / worked hard. (D) / No Error (E)", a: 2, s: "Part (C): 'yet' के बदले 'although' का प्रयोग होगा। (Condition)।" },
+    { t: "I cannot say (A) / if he has paid (B) / the fee or not. (C) / No Error (D) (E)", a: 1, s: "Part (B): 'if' के बदले 'whether' का प्रयोग होगा। (Whether...or)।" }
+];
+
+let curQ = 0, qList = [], uAns = {}, sub = false, tmr;
+
+function start(set) {
+    document.getElementById('start').style.display = 'none';
+    let s = set==1 ? 0 : 25;
+    let e = set==1 ? 25 : db.length;
+    qList = db.slice(s, e);
+    
+    let h = '';
+    qList.forEach((_, i) => h += `<div class="pal-btn" id="p${i}" onclick="jump(${i})">${i+1}</div>`);
+    document.getElementById('pal').innerHTML = h;
+
+    load(0);
+    
+    let t = 900;
+    tmr = setInterval(() => {
+        t--;
+        let m = Math.floor(t/60).toString().padStart(2,'0');
+        let s = (t%60).toString().padStart(2,'0');
+        document.getElementById('time').innerText = m+':'+s;
+        if(t<=0) submit();
+    }, 1000);
+}
+
+function load(i) {
+    curQ = i;
+    let d = qList[i];
+    
+    let txt = d.t.replace(/\(([A-E])\)/g, '<span class="marker">($1)</span>');
+    document.getElementById('q-txt').innerHTML = txt;
+    document.getElementById('q-idx').innerText = 'Q' + (i+1);
+
+    let hasE = d.t.includes("(E)");
+    let opts = ["(A)", "(B)", "(C)", "(D)"];
+    if(hasE) opts.push("No Error (E)");
+    else opts[3] = "No Error (D)"; 
+
+    let h = '';
+    opts.forEach((l, idx) => {
+        let sel = uAns[i] === idx ? 'selected' : '';
+        let style = '';
+        if(sub) {
+            if(idx === d.a) style = 'border-color:#0acf83; background:#e5fbf2;';
+            else if(sel && idx !== d.a) style = 'border-color:#f25050; background:#fef1f1;';
+        }
+        h += `<div class="opt ${sel}" style="${style}" onclick="pick(${idx})">
+            <div class="circle"></div><span>${l}</span>
+        </div>`;
+    });
+    document.getElementById('opts').innerHTML = h;
+
+    document.querySelectorAll('.pal-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('p'+i).classList.add('active');
+
+    if(sub) {
+        document.getElementById('sol').style.display = 'block';
+        document.getElementById('sol-txt').innerText = d.s;
+    } else {
+        document.getElementById('sol').style.display = 'none';
+    }
+}
+
+function pick(o) {
+    if(sub) return;
+    uAns[curQ] = o;
+    document.getElementById('p'+curQ).classList.add('done');
+    load(curQ);
+}
+
+function nav(d) {
+    let n = curQ + d;
+    if(n >= 0 && n < qList.length) load(n);
+}
+
+function jump(i) { load(i); }
+
+function submit() {
+    clearInterval(tmr);
+    sub = true;
+    document.querySelector('.submit').style.display = 'none';
+    let sc = 0;
+    qList.forEach((q, i) => {
+        if(uAns[i] === q.a) sc += 1;
+        else if(uAns[i] !== undefined) sc -= 0.25;
+    });
+    alert('Score: ' + sc);
+    load(curQ);
+}
+</script>
+</body>
+</html>

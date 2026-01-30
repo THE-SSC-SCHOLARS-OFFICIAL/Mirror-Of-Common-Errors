@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Narration Mock Test - THE SSC SCHOLARS</title>
+<style>
+    :root { --blue: #007bff; --green: #0acf83; --red: #f25050; --bg: #f2f3f5; }
+    * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body { margin: 0; background: var(--bg); height: 100vh; display: flex; flex-direction: column; }
+
+    header { background: #fff; padding: 0 20px; height: 60px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
+    .logo { font-weight: 800; color: #333; }
+    .timer { background: #eef2f8; padding: 5px 10px; border-radius: 4px; font-weight: bold; }
+    .submit { background: var(--green); color: white; border: none; padding: 8px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+
+    .container { display: flex; flex: 1; overflow: hidden; }
+    .q-panel { flex: 1; background: #fff; margin: 15px; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    
+    .q-header { padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; font-weight: bold; }
+    .q-body { flex: 1; padding: 20px; overflow-y: auto; }
+    .q-text { font-size: 1.15rem; margin-bottom: 20px; line-height: 1.6; color: #2d3748; }
+    .marker { color: var(--blue); font-weight: bold; background: #ebf8ff; padding: 2px 5px; border-radius: 4px; font-size: 0.9em; margin: 0 2px; }
+
+    .opts { display: flex; flex-direction: column; gap: 10px; }
+    .opt { display: flex; align-items: center; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+    .opt:hover { background: #f7fafc; border-color: #cbd5e0; }
+    .opt.selected { border-color: var(--blue); background: #ebf8ff; }
+    .circle { width: 18px; height: 18px; border: 2px solid #a0aec0; border-radius: 50%; margin-right: 15px; position: relative; }
+    .opt.selected .circle { border-color: var(--blue); }
+    .opt.selected .circle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 8px; height: 8px; background: var(--blue); border-radius: 50%; }
+
+    .sol-box { margin-top: 20px; background: #ebf8ff; border: 1px solid #bee3f8; border-radius: 6px; padding: 15px; display: none; }
+    .sol-title { font-weight: bold; color: #2b6cb0; margin-bottom: 5px; }
+
+    .footer { padding: 15px; border-top: 1px solid #eee; display: flex; justify-content: space-between; }
+    .btn { padding: 8px 20px; border: 1px solid #ccc; background: white; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    .btn-save { background: var(--blue); color: white; border: none; }
+
+    .sidebar { width: 280px; background: white; border-left: 1px solid #ddd; display: flex; flex-direction: column; }
+    .pal-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; overflow-y: auto; }
+    .pal-btn { height: 35px; border: 1px solid #ddd; background: white; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #555; }
+    .pal-btn.active { border-color: var(--blue); color: var(--blue); border-width: 2px; }
+    .pal-btn.done { background: var(--green); color: white; border-color: var(--green); }
+
+    #start { position: fixed; inset: 0; background: rgba(255,255,255,0.98); z-index: 100; display: flex; align-items: center; justify-content: center; }
+    .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 400px; text-align: center; border: 1px solid #ddd; }
+    .start-btn { width: 100%; padding: 15px; margin: 10px 0; background: white; border: 2px solid var(--blue); color: var(--blue); font-weight: bold; border-radius: 8px; cursor: pointer; text-align: left; }
+    .start-btn:hover { background: var(--blue); color: white; }
+
+    @media(max-width:768px) { .sidebar{display:none;} .container{flex-direction:column;} }
+</style>
+</head>
+<body>
+
+<div id="start">
+    <div class="card">
+        <h2>Chapter 12: Narration</h2>
+        <p>Mirror of Common English</p>
+        <button class="start-btn" onclick="start(1)">Set 1 (Q1-25)</button>
+        <button class="start-btn" onclick="start(2)">Set 2 (Q26-50)</button>
+    </div>
+</div>
+
+<header>
+    <div class="logo">THE SSC SCHOLARS OFFICIAL</div>
+    <div class="timer" id="time">15:00</div>
+    <button class="submit" onclick="submit()">SUBMIT</button>
+</header>
+
+<div class="container">
+    <div class="q-panel">
+        <div class="q-header">
+            <span id="q-idx">Q1</span>
+            <span>+1.0 / -0.25</span>
+        </div>
+        <div class="q-body">
+            <div class="q-text" id="q-txt"></div>
+            <div class="opts" id="opts"></div>
+            <div class="sol-box" id="sol">
+                <div class="sol-title">Solution</div>
+                <div id="sol-txt"></div>
+            </div>
+        </div>
+        <div class="footer">
+            <button class="btn" onclick="nav(-1)">Prev</button>
+            <button class="btn btn-save" onclick="nav(1)">Save & Next</button>
+        </div>
+    </div>
+    <div class="sidebar">
+        <div style="padding:15px;border-bottom:1px solid #eee;font-weight:bold">Questions</div>
+        <div class="pal-grid" id="pal"></div>
+    </div>
+</div>
+
+<script>
+const db = [
+    // SET 1 (Q1-25)
+    { t: "I told him (A) / that his brother died (B) / just two (C) / months before. (D) / No Error (E)", a: 1, s: "Part (B): 'died' के बदले 'had died' का प्रयोग होगा। यदि Direct Narration में Reporting Verb Past Tense में हो और Reported Speech Past Indefinite में, तो Indirect में वह Past Perfect में बदल जाता है।" },
+    { t: "The visitor told me that he had (A) / come from Kolkata (B) / to discuss some of the (C) / important issues with me. (D) / No Error (E)", a: 4, s: "No Error. वाक्य शुद्ध है।" },
+    { t: "Soma ordered her servant (A) / to bring her some (B) / hot water as she has (C) / to take some medicine. (D) / No Error (E)", a: 2, s: "Part (C): 'has' के बदले 'had' का प्रयोग होगा। Reporting Verb 'ordered' Past Tense में है, इसलिए Reported Speech भी Past में होगा।" },
+    { t: "The father said to his son (A) / that if he wanted to (B) / achieve his goal, (C) / he must work hard. (D) / No Error (E)", a: 3, s: "Part (D): 'must' के बदले 'had to' का प्रयोग बेहतर होगा (Past obligation), या 'must' ज्यों का त्यों भी रह सकता है। लेकिन Context (Past advice) के अनुसार 'he had to work hard' या 'must' सही माना जाता है। (Book Answer: D)।" },
+    { t: "They proposed to me (A) / to join the party (B) / and work for the (C) / welfare of the downtrodden. (D) / No Error (E)", a: 1, s: "Part (B): 'to join' के बदले 'that I should join' या 'that we should join' का प्रयोग होगा। Propose/Suggest के बाद that-clause आता है, Infinitive (to+V1) नहीं।" },
+    { t: "Instead of going to London (A) / he went to America (B) / and stays (C) / there for a month. (D) / No Error (E)", a: 2, s: "Part (C): 'stays' के बदले 'stayed' का प्रयोग होगा। वाक्य Past Tense में है (went)।" },
+    { t: "The prisoners walked slowly (A) / for they knew that as (B) / soon as they cross the gate, (C) / the jailor would ask them to jog. (D) / No Error (E)", a: 2, s: "Part (C): 'cross' के बदले 'crossed' का प्रयोग होगा। Reporting Verb 'knew' Past Tense में है।" },
+    { t: "My friend being ill sent (A) / to his boss an application (B) / explaining why could he (C) / not go to the office. (D) / No Error (E)", a: 2, s: "Part (C): 'why could he' के बदले 'why he could' का प्रयोग होगा। Indirect Question में Verb Subject के बाद आता है।" },
+    { t: "When Meena said (A) / that she was coming to see me (B) / the next day, I wondered (C) / what time she will arrive. (D) / No Error (E)", a: 3, s: "Part (D): 'will' के बदले 'would' का प्रयोग होगा। Reporting verb 'wondered' Past Tense में है, इसलिए Future भी Past (would) में होगा।" },
+    { t: "I told him (A) / that I could not (B) / help him then. (C) / No Error (D) (E)", a: 4, s: "No Error. वाक्य शुद्ध है।" },
+    { t: "I suggested (A) / to him that (B) / he does (C) / the work. (D) / No Error (E)", a: 2, s: "Part (C): 'does' के बदले 'did' या 'should do' का प्रयोग होगा। Suggestion के बाद Should Clause या Subjunctive Mood का प्रयोग होता है।" },
+    { t: "He asked me (A) / why had I (B) / gone to the party (C) / last night. (D) / No Error (E)", a: 1, s: "Part (B): 'why had I' के बदले 'why I had' होगा। Indirect Speech में Inversion नहीं होता।" },
+    { t: "The teacher said (A) / that the earth (B) / moves round the sun (C) / tomorrow. (D) / No Error (E)", a: 2, s: "Part (C): 'tomorrow' का प्रयोग यहाँ गलत संदर्भ में है या 'on the morrow' होना चाहिए यदि यह Narration का Time change है। (Book Exp: tomorrow -> the next day)।" },
+    { t: "He told me (A) / that he left (B) / the school (C) / a year ago. (D) / No Error (E)", a: 1, s: "Part (B): 'he left' के बदले 'he had left' का प्रयोग होगा। Past Indefinite (Direct) -> Past Perfect (Indirect)।" },
+    { t: "He requested the teacher (A) / to allow him to go home (B) / as he got (C) / a severe headache. (D) / No Error (E)", a: 2, s: "Part (C): 'he got' के बदले 'he had got' होगा। (Past of Past)।" },
+    { t: "He asked her (A) / what could she (B) / do for him. (C) / No Error (D) (E)", a: 1, s: "Part (B): 'what could she' के बदले 'what she could' होगा। (Assertive order)।" },
+    { t: "He asked me (A) / that if I (B) / was happy. (C) / No Error (D) (E)", a: 1, s: "Part (B): 'that' का प्रयोग नहीं होगा। If/Whether के पहले That नहीं लगता।" },
+    { t: "The government warned (A) / the multiplexes that if (B) / they persist in charging high prices, their licenses would be cancelled. (C) / No Error (D) (E)", a: 2, s: "Part (C): 'persist' के बदले 'persisted' होगा। Warned (Past) -> Persisted (Past)।" },
+    { t: "I was surprised (A) / to know why had he turned (B) / down such a good offer (C) / of marriage. (D) / No Error (E)", a: 1, s: "Part (B): 'why had he' के बदले 'why he had' का प्रयोग होगा। (Indirect Question)।" },
+    { t: "My instructor told me (A) / that if I do (B) / the lessons regularly, I (C) / would certainly obtain good marks. (D) / No Error (E)", a: 1, s: "Part (B): 'do' के बदले 'did' का प्रयोग होगा। Told (Past) -> Did (Past)।" },
+    { t: "They did not (A) / know why the two (B) / brothers were fighting (C) / with each other. (D) / No Error (E)", a: 4, s: "No Error. वाक्य शुद्ध है।" },
+    { t: "My father wanted to know (A) / that I had done (B) / all the work (C) / assigned to me. (D) / No Error (E)", a: 1, s: "Part (B): 'that' के बदले 'if' या 'whether' का प्रयोग होगा। Want to know के बाद Interrogative connective आता है।" },
+    { t: "She says, 'My cousin studied (A) / hard in order that he (B) / may win the prize.' (C) / No Error (D) (E)", a: 2, s: "Part (C): 'may' के बदले 'might' का प्रयोग होगा। Studied (Past) -> Might (Past)।" },
+    { t: "The news reporter asked (A) / me that where (B) / I was going. (C) / No Error (D) (E)", a: 1, s: "Part (B): 'that' का प्रयोग नहीं होगा। Wh-word (where) ही connective का काम करता है।" },
+    { t: "He was determined to (A) / participate in the car race (B) / even though he knew (C) / that he will not succeed. (D) / No Error (E)", a: 3, s: "Part (D): 'will' के बदले 'would' का प्रयोग होगा। Knew (Past) -> Would (Past)।" },
+
+    // SET 2 (Q26-50)
+    { t: "The traveller asked me (A) / if I could tell him (B) / the way to the (C) / nearest railway station. (D) / No Error (E)", a: 4, s: "No Error. वाक्य शुद्ध है।" },
+    { t: "Mohan said that he was going to (A) / the library and wanted (B) / to know that I could (C) / accompany him. (D) / No Error (E)", a: 2, s: "Part (C): 'that' के बदले 'if' या 'whether' का प्रयोग होगा। (Yes/No Question)।" },
+    { t: "The youngest princess took (A) / her father's hand in hers (B) / and simply said that (C) / she loves her more than salt. (D) / No Error (E)", a: 3, s: "Part (D): 'loves' के बदले 'loved' का प्रयोग होगा। Said (Past) -> Loved (Past)।" },
+    { t: "The teacher being very angry (A) / with the pupils asked (B) / them why they had made (C) / a noise like this. (D) / No Error (E)", a: 3, s: "Part (D): 'this' के बदले 'that' का प्रयोग होगा। Indirect Speech में This का That हो जाता है।" },
+    { t: "She requested her companions (A) / to wait for her (B) / until she (C) / comes back. (D) / No Error (E)", a: 3, s: "Part (D): 'comes' के बदले 'came' का प्रयोग होगा। Requested (Past) -> Came (Past)।" },
+    { t: "Our teacher said to us (A) / that we should not live (B) / beyond our means (C) / if we don't want to invite misery. (D) / No Error (E)", a: 3, s: "Part (D): 'don't' के बदले 'didn't' का प्रयोग होगा। Said (Past) -> Didn't (Past)।" },
+    { t: "The father forbade his son (A) / to walk in the sun (B) / and play with (C) / his friends on the road. (D) / No Error (E)", a: 4, s: "No Error. Forbade के साथ Not नहीं लगता और Infinitive का प्रयोग सही है।" },
+    { t: "When the mother saw (A) / a bull coming towards the (B) / children, she cried out (C) / and ask them to run away. (D) / No Error (E)", a: 3, s: "Part (D): 'ask' के बदले 'asked' का प्रयोग होगा। (Parallelism in Past Tense)।" },
+    { t: "The teacher said to the students (A) / that a vegetarian (B) / is a person who (C) / never eats meat. (D) / No Error (E)", a: 4, s: "No Error. Universal Truth (Present Indefinite) का Tense नहीं बदलता।" },
+    { t: "In one of his famous sonnets, (A) / Milton says that (B) / 'They also serve (C) / who only stand and wait'. (D) / No Error (E)", a: 2, s: "Part (C): 'They' के पहले 'that' का प्रयोग अनावश्यक है यदि Inverted Commas हैं, या फिर Inverted Commas हटाने होंगे। Book Explanation: No Error. (C is correct as quoted)." },
+    { t: "The sum and substance (A) / of the speech of the leader was (B) / that the country's (C) / future was bleak. (D) / No Error (E)", a: 1, s: "Part (B): 'was' के बदले 'is' का प्रयोग हो सकता है यदि speech का content Universal हो, लेकिन यहाँ Past Context है। Book Answer: (B). Maybe 'is' because sum and substance is present fact." },
+    { t: "The minister readily (A) / gave assurance that (B) / the matter will be looked into (C) / as soon as possible. (D) / No Error (E)", a: 2, s: "Part (C): 'will' के बदले 'would' का प्रयोग होगा। Gave (Past) -> Would (Past)।" },
+    { t: "The guide told us (A) / that where the island (B) / was and went on (C) / narrating its history. (D) / No Error (E)", a: 1, s: "Part (B): 'that' का प्रयोग नहीं होगा। Where connective है।" },
+    { t: "Shyama said apologetically (A) / that 'I am not feeling (B) / well and so I cannot (C) / go with you today'. (D) / No Error (E)", a: 1, s: "Part (B): 'that' का प्रयोग नहीं होगा यदि Direct Speech (Inverted commas) ज्यों का त्यों रखा गया है।" },
+    { t: "The Duke expressed (A) / his wish to see his (B) / native land again but there (C) / appears no scope. (D) / No Error (E)", a: 3, s: "Part (D): 'appears' के बदले 'appeared' का प्रयोग होगा। Expressed (Past) -> Appeared (Past)।" },
+    { t: "Shamim exclaimed (A) / with delight that (B) / they have won the match (C) / by six wickets. (D) / No Error (E)", a: 2, s: "Part (C): 'have' के बदले 'had' का प्रयोग होगा। Exclaimed (Past) -> Had (Past)।" },
+    { t: "The hermit prayed (A) / that God might (B) / help me in (C) / my mission. (D) / No Error (E)", a: 4, s: "No Error. Optative Sentence का Passive सही है।" },
+    { t: "They exclaimed with delight that it (A) / was a very beautiful (B) / picture and said that they have never seen (C) / such a beautiful picture before. (D) / No Error (E)", a: 2, s: "Part (C): 'have' के बदले 'had' का प्रयोग होगा। Past context." },
+    { t: "The commander thought (A) / that the gates should (B) / be locked as it is eight o'clock. (C) / No Error (D) (E)", a: 3, s: "Part (D): 'is' के बदले 'was' का प्रयोग होगा। Thought (Past) -> Was (Past)।" },
+    { t: "She said that she would not tell (A) / anything until she (B) / has heard the facts. (C) / No Error (D) (E)", a: 3, s: "Part (D): 'has' के बदले 'had' का प्रयोग होगा। Said (Past) -> Had (Past)।" },
+    { t: "He reminded me that he has often (A) / told me not to play (B) / with fire. (C) / No Error (D) (E)", a: 1, s: "Part (B): 'has' के बदले 'had' का प्रयोग होगा। Reminded (Past) -> Had (Past)।" },
+    { t: "It was seven o'clock in the evening (A) / when the train steamed (B) / into the station. (C) / No Error (D) (E)", a: 4, s: "No Error. वाक्य शुद्ध है।" },
+    { t: "The issues were so complex (A) / that they could not be resolved (B) / in such a short time. (C) / No Error (D) (E)", a: 4, s: "No Error. वाक्य शुद्ध है।" },
+    { t: "The report said that the judge (A) / acquitted them of all the charges. (B) / because of lack of evidence. (C) / No Error (D) (E)", a: 1, s: "Part (B): 'acquitted' के बदले 'had acquitted' का प्रयोग होगा। (Past of Past)।" },
+    { t: "He asked me if I would (A) / accompany him to the market (B) / and I replied that I would. (C) / No Error (D) (E)", a: 4, s: "No Error. वाक्य शुद्ध है।" }
+];
+
+let curQ = 0, qList = [], uAns = {}, sub = false, tmr;
+
+function start(set) {
+    document.getElementById('start').style.display = 'none';
+    let s = set==1 ? 0 : 25;
+    let e = set==1 ? 25 : db.length;
+    qList = db.slice(s, e);
+    
+    let h = '';
+    qList.forEach((_, i) => h += `<div class="pal-btn" id="p${i}" onclick="jump(${i})">${i+1}</div>`);
+    document.getElementById('pal').innerHTML = h;
+
+    load(0);
+    
+    let t = 900;
+    tmr = setInterval(() => {
+        t--;
+        let m = Math.floor(t/60).toString().padStart(2,'0');
+        let s = (t%60).toString().padStart(2,'0');
+        document.getElementById('time').innerText = m+':'+s;
+        if(t<=0) submit();
+    }, 1000);
+}
+
+function load(i) {
+    curQ = i;
+    let d = qList[i];
+    
+    let txt = d.t.replace(/\(([A-E])\)/g, '<span class="marker">($1)</span>');
+    document.getElementById('q-txt').innerHTML = txt;
+    document.getElementById('q-idx').innerText = 'Q' + (i+1);
+
+    let hasE = d.t.includes("(E)");
+    let opts = ["(A)", "(B)", "(C)", "(D)"];
+    if(hasE) opts.push("No Error (E)");
+    else opts[3] = "No Error (D)"; 
+
+    let h = '';
+    opts.forEach((l, idx) => {
+        let sel = uAns[i] === idx ? 'selected' : '';
+        let style = '';
+        if(sub) {
+            if(idx === d.a) style = 'border-color:#0acf83; background:#e5fbf2;';
+            else if(sel && idx !== d.a) style = 'border-color:#f25050; background:#fef1f1;';
+        }
+        h += `<div class="opt ${sel}" style="${style}" onclick="pick(${idx})">
+            <div class="circle"></div><span>${l}</span>
+        </div>`;
+    });
+    document.getElementById('opts').innerHTML = h;
+
+    document.querySelectorAll('.pal-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('p'+i).classList.add('active');
+
+    if(sub) {
+        document.getElementById('sol').style.display = 'block';
+        document.getElementById('sol-txt').innerText = d.s;
+    } else {
+        document.getElementById('sol').style.display = 'none';
+    }
+}
+
+function pick(o) {
+    if(sub) return;
+    uAns[curQ] = o;
+    document.getElementById('p'+curQ).classList.add('done');
+    load(curQ);
+}
+
+function nav(d) {
+    let n = curQ + d;
+    if(n >= 0 && n < qList.length) load(n);
+}
+
+function jump(i) { load(i); }
+
+function submit() {
+    clearInterval(tmr);
+    sub = true;
+    document.querySelector('.submit').style.display = 'none';
+    let sc = 0;
+    qList.forEach((q, i) => {
+        if(uAns[i] === q.a) sc += 1;
+        else if(uAns[i] !== undefined) sc -= 0.25;
+    });
+    alert('Score: ' + sc);
+    load(curQ);
+}
+</script>
+</body>
+</html>

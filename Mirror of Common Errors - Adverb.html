@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adverbs Mock Test - THE SSC SCHOLARS</title>
+<style>
+    :root { --blue: #007bff; --green: #0acf83; --red: #f25050; --bg: #f2f3f5; }
+    * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body { margin: 0; background: var(--bg); height: 100vh; display: flex; flex-direction: column; }
+
+    /* Header */
+    header { background: #fff; padding: 0 20px; height: 60px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
+    .logo { font-weight: 800; color: #333; }
+    .timer { background: #eef2f8; padding: 5px 10px; border-radius: 4px; font-weight: bold; }
+    .submit { background: var(--green); color: white; border: none; padding: 8px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+
+    /* Main */
+    .container { display: flex; flex: 1; overflow: hidden; }
+    .q-panel { flex: 1; background: #fff; margin: 15px; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    
+    .q-header { padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; font-weight: bold; }
+    .q-body { flex: 1; padding: 20px; overflow-y: auto; }
+    .q-text { font-size: 1.15rem; margin-bottom: 20px; line-height: 1.6; color: #2d3748; }
+    .marker { color: var(--blue); font-weight: bold; background: #ebf8ff; padding: 2px 5px; border-radius: 4px; font-size: 0.9em; margin: 0 2px; }
+
+    /* Options */
+    .opts { display: flex; flex-direction: column; gap: 10px; }
+    .opt { display: flex; align-items: center; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+    .opt:hover { background: #f7fafc; border-color: #cbd5e0; }
+    .opt.selected { border-color: var(--blue); background: #ebf8ff; }
+    .circle { width: 18px; height: 18px; border: 2px solid #a0aec0; border-radius: 50%; margin-right: 15px; position: relative; }
+    .opt.selected .circle { border-color: var(--blue); }
+    .opt.selected .circle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 8px; height: 8px; background: var(--blue); border-radius: 50%; }
+
+    /* Solution */
+    .sol-box { margin-top: 20px; background: #ebf8ff; border: 1px solid #bee3f8; border-radius: 6px; padding: 15px; display: none; }
+    .sol-title { font-weight: bold; color: #2b6cb0; margin-bottom: 5px; }
+
+    /* Footer */
+    .footer { padding: 15px; border-top: 1px solid #eee; display: flex; justify-content: space-between; }
+    .btn { padding: 8px 20px; border: 1px solid #ccc; background: white; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    .btn-save { background: var(--blue); color: white; border: none; }
+
+    /* Sidebar */
+    .sidebar { width: 280px; background: white; border-left: 1px solid #ddd; display: flex; flex-direction: column; }
+    .pal-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; overflow-y: auto; }
+    .pal-btn { height: 35px; border: 1px solid #ddd; background: white; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #555; }
+    .pal-btn.active { border-color: var(--blue); color: var(--blue); border-width: 2px; }
+    .pal-btn.done { background: var(--green); color: white; border-color: var(--green); }
+
+    /* Start Screen */
+    #start { position: fixed; inset: 0; background: rgba(255,255,255,0.98); z-index: 100; display: flex; align-items: center; justify-content: center; }
+    .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 400px; text-align: center; border: 1px solid #ddd; }
+    .start-btn { width: 100%; padding: 15px; margin: 10px 0; background: white; border: 2px solid var(--blue); color: var(--blue); font-weight: bold; border-radius: 8px; cursor: pointer; text-align: left; }
+    .start-btn:hover { background: var(--blue); color: white; }
+
+    @media(max-width:768px) { .sidebar{display:none;} .container{flex-direction:column;} }
+</style>
+</head>
+<body>
+
+<div id="start">
+    <div class="card">
+        <h2>Chapter 9: Adverbs</h2>
+        <p>Mirror of Common English</p>
+        <button class="start-btn" onclick="start(1)">Set 1 (Q1-25)</button>
+        <button class="start-btn" onclick="start(2)">Set 2 (Q26-51)</button>
+    </div>
+</div>
+
+<header>
+    <div class="logo">THE SSC SCHOLARS OFFICIAL</div>
+    <div class="timer" id="time">15:00</div>
+    <button class="submit" onclick="submit()">SUBMIT</button>
+</header>
+
+<div class="container">
+    <div class="q-panel">
+        <div class="q-header">
+            <span id="q-idx">Q1</span>
+            <span>+1.0 / -0.25</span>
+        </div>
+        <div class="q-body">
+            <div class="q-text" id="q-txt"></div>
+            <div class="opts" id="opts"></div>
+            <div class="sol-box" id="sol">
+                <div class="sol-title">Solution</div>
+                <div id="sol-txt"></div>
+            </div>
+        </div>
+        <div class="footer">
+            <button class="btn" onclick="nav(-1)">Prev</button>
+            <button class="btn btn-save" onclick="nav(1)">Save & Next</button>
+        </div>
+    </div>
+    <div class="sidebar">
+        <div style="padding:15px;border-bottom:1px solid #eee;font-weight:bold">Questions</div>
+        <div class="pal-grid" id="pal"></div>
+    </div>
+</div>
+
+<script>
+const db = [
+    // SET 1 (Q1-25)
+    { t: "Although I was (A) / in Delhi last month, (B) / I never met him. (C) / No Error (D) (E)", a: 2, s: "Part (C): 'never' के बदले 'did not' का प्रयोग होगा। 'Never' का प्रयोग 'कभी नहीं' के अर्थ में होता है, जबकि यहाँ एक विशिष्ट घटना (last month) की बात हो रही है, इसलिए 'did not meet' सही है।" },
+    { t: "One should (A) / face the misfortunes (B) / of life manly. (C) / No Error (D) (E)", a: 2, s: "Part (C): 'manly' के बदले 'manfully' का प्रयोग होगा। 'Manly' एक Adjective है, जबकि यहाँ Verb 'face' को modify करने के लिए Adverb 'manfully' चाहिए।" },
+    { t: "When I got (A) / home I was (B) / too exhausted. (C) / No Error (D) (E)", a: 2, s: "Part (C): 'too' के बदले 'very' का प्रयोग होगा। Past Participle (exhausted) के साथ 'too' का प्रयोग तब होता है जब आगे infinitive हो (too exhausted to walk)। यहाँ सिर्फ अवस्था बतानी है, इसलिए 'very exhausted' सही है।" },
+    { t: "I did not know hardly (A) / anyone in the city (B) / and so felt lonely. (C) / No Error (D) (E)", a: 0, s: "Part (A): 'not' को हटाना होगा। 'Hardly' स्वयं Negative शब्द है, इसलिए इसके साथ 'not' का प्रयोग नहीं होता।" },
+    { t: "I rarely find something (A) / in his character (B) / that I can admire. (C) / No Error (D) (E)", a: 0, s: "Part (A): 'something' के बदले 'anything' का प्रयोग होगा। Rarely, Seldom, Hardly आदि Negative Adverbs के बाद 'anything' का प्रयोग होता है।" },
+    { t: "You have (A) / acted nobler (B) / than all of us. (C) / No Error (D) (E)", a: 1, s: "Part (B): 'nobler' के बदले 'more nobly' का प्रयोग होगा। 'Acted' (Verb) को modify करने के लिए Adverb चाहिए, और noble का Adverb form 'nobly' है, जिसका Comparative 'more nobly' होता है।" },
+    { t: "He is enough kind (A) / to help everybody (B) / in need. (C) / No Error (D) (E)", a: 0, s: "Part (A): 'enough kind' के बदले 'kind enough' का प्रयोग होगा। Enough जब Adjective या Adverb को modify करता है, तो उसके बाद आता है (Adjective + Enough)।" },
+    { t: "Don't stop (A) / anywhere. Go home (B) / directly. (C) / No Error (D) (E)", a: 2, s: "Part (C): 'directly' के बदले 'direct' का प्रयोग होगा। 'Go direct' का अर्थ है 'सीधे जाना' (बिना रुके)। 'Directly' का अर्थ है 'तुरंत' (at once)।" },
+    { t: "He has no time (A) / to read magazines (B) / and no desire neither. (C) / No Error (D) (E)", a: 2, s: "Part (C): 'neither' के बदले 'either' का प्रयोग होगा। वाक्य पहले से Negative (no desire) है, इसलिए अंत में 'either' आएगा।" },
+    { t: "He has not seldom (A) / visited his parents (B) / since he left this place. (C) / No Error (D) (E)", a: 0, s: "Part (A): 'not seldom' का प्रयोग गलत है। इसे 'seldom' या 'seldom if ever' होना चाहिए। या फिर, अगर अर्थ 'बार-बार' है तो 'frequently' का प्रयोग करें। यहाँ सन्दर्भानुसार 'seldom' सही है (बिना not के)।" },
+    { t: "It was much hot (A) / yesterday and we (B) / didn't go out. (C) / No Error (D) (E)", a: 0, s: "Part (A): 'much hot' के बदले 'very hot' का प्रयोग होगा। Positive Degree (hot) के पहले 'very' लगता है, 'much' नहीं।" },
+    { t: "I meet him often (A) / near (B) / the Town Hall. (C) / No Error (D) (E)", a: 0, s: "Part (A): 'meet him often' के बदले 'often meet him' होगा। Adverb of Frequency (often) मुख्य क्रिया (meet) के पहले आता है।" },
+    { t: "I told her (A) / as blunt as I could (B) / but she was not convinced. (C) / No Error (D) (E)", a: 1, s: "Part (B): 'blunt' के बदले 'bluntly' का प्रयोग होगा। 'Told' (Verb) की विशेषता बताने के लिए Adverb चाहिए।" },
+    { t: "What to talk (A) / of tea they did not (B) / offer us even water. (C) / No Error (D) (E)", a: 0, s: "Part (A): 'What to talk of' के बदले 'Not to speak of' का प्रयोग होगा। यह सही Idiomatic expression है।" },
+    { t: "My mother works (A) / very quicker than (B) / I at embroidery. (C) / No Error (D) (E)", a: 1, s: "Part (B): 'very' के बदले 'much' का प्रयोग होगा। Comparative Degree (quicker) के पहले 'much' का प्रयोग होता है, 'very' का नहीं।" },
+    { t: "Anna came to the classroom (A) / lately and was punished (B) / by the teacher. (C) / No Error (D) (E)", a: 1, s: "Part (B): 'lately' के बदले 'late' का प्रयोग होगा। 'Lately' का अर्थ 'हाल ही में' (recently) होता है, जबकि यहाँ 'देर से' (late) का अर्थ चाहिए।" },
+    { t: "He looks full of energy (A) / today because he (B) / soundly slept last night. (C) / No Error (D) (E)", a: 2, s: "Part (C): 'soundly slept' के बदले 'slept soundly' होगा। Adverb of Manner (soundly) Intransitive Verb (slept) के बाद आता है।" },
+    { t: "I care a fig (A) / for such a (B) / worthless fellow. (C) / No Error (D) (E)", a: 0, s: "Part (A): 'care a fig' के बदले 'don't care a fig' होगा। यह Idiom Negative Sense में प्रयोग होता है।" },
+    { t: "She had barely (A) / nothing to eat (B) / when she came to me. (C) / No Error (D) (E)", a: 1, s: "Part (B): 'nothing' के बदले 'anything' होगा। 'Barely' Negative है, इसके साथ double negative (nothing) नहीं लगता।" },
+    { t: "Whatever work (A) / that which you undertake (B) / put your best efforts in it. (C) / No Error (D) (E)", a: 1, s: "Part (B): 'that which' को हटाना होगा। 'Whatever work you undertake...' सही संरचना है।" },
+    { t: "He has been trying (A) / to lure her for months (B) / but owing to his misfortune he has not still succeeded. (C) / No Error (D) (E)", a: 2, s: "Part (C): 'still' के बदले 'yet' का प्रयोग होगा। Negative वाक्यों में कार्य के पूरा न होने के लिए 'yet' का प्रयोग अंत में होता है (...has not succeeded yet)।" },
+    { t: "He is a linguist (A) / and always tries to (B) / make his students pronounce a word correctly. (C) / No Error (D) (E)", a: 3, s: "Part (C): 'pronounce a word correctly' के बदले 'pronounce a word correct' का प्रयोग होगा, यदि emphasis उच्चारण के सही होने पर है। (Note: कई बार correctly को भी स्वीकार्य माना जाता है, लेकिन book में 'correct' दिया है)।" },
+    { t: "Being much contented with the sincerity (A) / of the members of the staff, (B) / the C.M. said that the state needed sincere men like them. (C) / No Error (D) (E)", a: 0, s: "Part (A): 'much' के बदले 'very' का प्रयोग होगा। Past Participle (contented) जो Adjective की तरह कार्य कर रहा है, के पहले 'very' लगता है (Very contented)।" },
+    { t: "When the prince saw the princess (A) / he cried out that he had (B) / never seen such a beautiful lady before. (C) / No Error (D) (E)", a: 4, s: "No Error. वाक्य शुद्ध है।" },
+    { t: "When asked, he (A) / took tea (B) / and said that it tasted sweetly. (C) / No Error (D) (E)", a: 2, s: "Part (C): 'sweetly' के बदले 'sweet' का प्रयोग होगा। 'Taste' एक Verb of Sensation है, जिसके बाद Adjective आता है, न कि Adverb।" },
+
+    // SET 2 (Q26-51)
+    { t: "The old man is blindly, (A) / so don't call him a liar when (B) / he says that he can't read. (C) / No Error (D) (E)", a: 0, s: "Part (A): 'blindly' के बदले 'blind' का प्रयोग होगा। 'Blind' एक Adjective है जो Noun (man) की विशेषता बताता है।" },
+    { t: "Such obstacles will not stop him; (A) / nothing never did; (B) / this is why he is progressing by leaps and bounds. (C) / No Error (D) (E)", a: 1, s: "Part (B): 'never' के बदले 'ever' का प्रयोग होगा। 'Nothing' के साथ 'never' (double negative) गलत है।" },
+    { t: "Not only drinking (A) / but also smoking (B) / is very injurious to health. (C) / No Error (D) (E)", a: 4, s: "No Error. वाक्य शुद्ध है।" },
+    { t: "If you ask me, (A) / Shyama is quite all right (B) / but I can't tell you much about Radha. (C) / No Error (D) (E)", a: 1, s: "Part (B): 'quite all right' में 'quite' हटाना होगा। 'All right' या 'Quite right' सही है, 'Quite all right' नहीं।" },
+    { t: "My friend said (A) / that he was only too glad (B) / to hear the result of his wife. (C) / No Error (D) (E)", a: 4, s: "No Error. 'Only too glad' का अर्थ है 'very glad'।" },
+    { t: "\"Nobody should try (A) / to disturb me (B) / without any urgency,\" the Doctor said to his assistants. (C) / No Error (D) (E)", a: 4, s: "No Error. वाक्य शुद्ध है।" },
+    { t: "Who will believe that she was not (A) / hardly-hit by her (B) / husband's death? (C) / No Error (D) (E)", a: 1, s: "Part (B): 'hardly-hit' के बदले 'hard hit' का प्रयोग होगा। 'Hardly' का अर्थ 'शायद ही' होता है, जबकि यहाँ 'गहरा असर' (hard hit) का अर्थ चाहिए।" },
+    { t: "Somebody reported to the contractor (A) / that his partner had only died (B) / a week before. (C) / No Error (D) (E)", a: 1, s: "Part (B): 'only' का स्थान 'a week before' के पहले होना चाहिए। 'Died only a week before' (केवल एक सप्ताह पहले)।" },
+    { t: "He asked me to (A) / completely forget her, (B) / but only I know how easy it is to say so. (C) / No Error (D) (E)", a: 1, s: "Part (B): 'completely' को 'forget' के बाद रखना चाहिए (forget her completely) ताकि Split Infinitive (to...forget) न बने।" },
+    { t: "When carefully examined, (A) / it will give us (B) / a clue to the mystery of the case. (C) / No Error (D) (E)", a: 0, s: "Part (A): 'carefully' को 'examined' के बाद रखना चाहिए (When examined carefully)।" },
+    { t: "She looked (A) / at him lovely (B) / but he did not respond to her. (C) / No Error (D) (E)", a: 1, s: "Part (B): 'lovely' के बदले 'lovingly' का प्रयोग होगा। 'Look at' (देखना) क्रिया है, इसलिए Adverb (lovingly) चाहिए।" },
+    { t: "He never (A) / liked to treat his brothers friendly, (B) / that's why he could not win their love and favour. (C) / No Error (D) (E)", a: 1, s: "Part (B): 'friendly' (Adjective) के बदले 'in a friendly manner' (Adverb phrase) का प्रयोग होगा। Friendly Adverb नहीं है।" },
+    { t: "They are very senior (A) / to me; so I dare not (B) / play a joke on them. (C) / No Error (D) (E)", a: 0, s: "Part (A): 'very' के बदले 'much' का प्रयोग होगा। Senior (Comparative force) के पहले 'much' लगता है।" },
+    { t: "I hardly ever (A) / see him because (B) / in my opinion he is not a man to be admired. (C) / No Error (D) (E)", a: 4, s: "No Error. 'Hardly ever' का प्रयोग सही है।" },
+    { t: "Before the game she felt surely (A) / of winning, but after five minutes (B) / she realized that it was not going to be so easy. (C) / No Error (D) (E)", a: 0, s: "Part (A): 'surely' के बदले 'sure' का प्रयोग होगा। Feel (sensation) के बाद Adjective आता है।" },
+    { t: "I know that eventually (A) / he will succumb to me (B) / and confess that he has committed a crime. (C) / No Error (D) (E)", a: 4, s: "No Error. वाक्य शुद्ध है।" },
+    { t: "\"Where else (A) / did you go besides (B) / the office?\" she asked her husband. (C) / No Error (D) (E)", a: 0, s: "Part (A): 'else' अनावश्यक है। 'Where did you go besides the office?' पर्याप्त है।" },
+    { t: "He said that the examination was bad (A) / and added that he could not answer (B) / questions enough to pass it. (C) / No Error (D) (E)", a: 4, s: "No Error. 'Questions enough' या 'Enough questions' दोनों सही माने जाते हैं, लेकिन यहाँ Enough Adjective के रूप में Noun के बाद भी आ सकता है।" },
+    { t: "Every member (A) / of the family is addicted to drinking (B) / and so Tom is. (C) / No Error (D) (E)", a: 2, s: "Part (C): 'so Tom is' के बदले 'so is Tom' का प्रयोग होगा। 'So + Aux + Sub' संरचना का प्रयोग 'भी' के अर्थ में होता है।" },
+    { t: "The eastwards wind helped (A) / the boat going from (B) / the western bank to the eastern bank of the river. (C) / No Error (D) (E)", a: 0, s: "Part (A): 'eastwards' के बदले 'eastward' का प्रयोग होगा। Noun (wind) के पहले Adjective (eastward) चाहिए, न कि Adverb (eastwards)।" },
+    { t: "Not only we lost (A) / what we had on our disposal, (B) / but we also lost our patience. (C) / No Error (D) (E)", a: 0, s: "Part (A): 'Not only we lost' के बदले 'Not only did we lose' होगा। जब वाक्य 'Not only' से शुरू हो, तो Inversion (Aux + Sub) का प्रयोग होता है।" },
+    { t: "\"Under no circumstances (A) / we can help (B) / you in this illegal work\", said the Manager. (C) / No Error (D) (E)", a: 1, s: "Part (B): 'we can help' के बदले 'can we help' होगा। Negative Adverbial phrase से शुरू होने पर Inversion लगता है।" },
+    { t: "Under a tree (A) / was sitting the saint (B) / whom we had seen somewhere else. (C) / No Error (D) (E)", a: 4, s: "No Error. Inversion (was sitting the saint) सही है क्योंकि वाक्य Place phrase से शुरू हो रहा है।" },
+    { t: "I don't like (A) / such nasty things. (B) / Nor he does. (C) / No Error (D) (E)", a: 2, s: "Part (C): 'Nor he does' के बदले 'Nor does he' होगा। 'Nor' से शुरू होने वाले clause में Inversion होता है।" }
+];
+
+let curQ = 0, qList = [], uAns = {}, sub = false, tmr;
+
+function start(set) {
+    document.getElementById('start').style.display = 'none';
+    let s = set==1 ? 0 : 25;
+    let e = set==1 ? 25 : db.length;
+    qList = db.slice(s, e);
+    
+    let h = '';
+    qList.forEach((_, i) => h += `<div class="pal-btn" id="p${i}" onclick="jump(${i})">${i+1}</div>`);
+    document.getElementById('pal').innerHTML = h;
+
+    load(0);
+    
+    let t = 900;
+    tmr = setInterval(() => {
+        t--;
+        let m = Math.floor(t/60).toString().padStart(2,'0');
+        let s = (t%60).toString().padStart(2,'0');
+        document.getElementById('time').innerText = m+':'+s;
+        if(t<=0) submit();
+    }, 1000);
+}
+
+function load(i) {
+    curQ = i;
+    let d = qList[i];
+    
+    let txt = d.t.replace(/\(([A-E])\)/g, '<span class="marker">($1)</span>');
+    document.getElementById('q-txt').innerHTML = txt;
+    document.getElementById('q-idx').innerText = 'Q' + (i+1);
+
+    let hasE = d.t.includes("(E)");
+    let opts = ["(A)", "(B)", "(C)", "(D)"];
+    if(hasE) opts.push("No Error (E)");
+    else opts[3] = "No Error (D)"; 
+
+    let h = '';
+    opts.forEach((l, idx) => {
+        let sel = uAns[i] === idx ? 'selected' : '';
+        let style = '';
+        if(sub) {
+            if(idx === d.a) style = 'border-color:#0acf83; background:#e5fbf2;';
+            else if(sel && idx !== d.a) style = 'border-color:#f25050; background:#fef1f1;';
+        }
+        h += `<div class="opt ${sel}" style="${style}" onclick="pick(${idx})">
+            <div class="circle"></div><span>${l}</span>
+        </div>`;
+    });
+    document.getElementById('opts').innerHTML = h;
+
+    document.querySelectorAll('.pal-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('p'+i).classList.add('active');
+
+    if(sub) {
+        document.getElementById('sol').style.display = 'block';
+        document.getElementById('sol-txt').innerText = d.s;
+    } else {
+        document.getElementById('sol').style.display = 'none';
+    }
+}
+
+function pick(o) {
+    if(sub) return;
+    uAns[curQ] = o;
+    document.getElementById('p'+curQ).classList.add('done');
+    load(curQ);
+}
+
+function nav(d) {
+    let n = curQ + d;
+    if(n >= 0 && n < qList.length) load(n);
+}
+
+function jump(i) { load(i); }
+
+function submit() {
+    clearInterval(tmr);
+    sub = true;
+    document.querySelector('.submit').style.display = 'none';
+    let sc = 0;
+    qList.forEach((q, i) => {
+        if(uAns[i] === q.a) sc += 1;
+        else if(uAns[i] !== undefined) sc -= 0.25;
+    });
+    alert('Score: ' + sc);
+    load(curQ);
+}
+</script>
+</body>
+</html>

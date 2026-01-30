@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SSC Pronoun Mock - THE SSC SCHOLARS</title>
+<style>
+    :root { 
+        --header-h: 60px;
+        --sidebar-w: 280px;
+        --blue: #007bff;
+        --green: #0acf83; 
+        --red: #f25050;
+        --gray-bg: #f2f3f5;
+        --border: #e0e0e0;
+    }
+    
+    * { box-sizing: border-box; }
+    body { font-family: 'Roboto', sans-serif; margin: 0; background: var(--gray-bg); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* HEADER */
+    header { height: var(--header-h); background: #fff; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 10; }
+    
+    /* LOGO UPDATE */
+    .logo { font-weight: 800; font-size: 1.1rem; color: #1a202c; letter-spacing: 0.5px; text-transform: uppercase; }
+    
+    .timer-box { background: #eef2f8; color: #333; padding: 6px 12px; border-radius: 4px; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+    .submit-btn { background: var(--green); color: white; border: none; padding: 8px 20px; border-radius: 4px; font-weight: 600; cursor: pointer; }
+    .submit-btn:hover { background: #08b974; }
+
+    /* LAYOUT */
+    .container { display: flex; flex: 1; height: calc(100vh - var(--header-h)); }
+    
+    /* LEFT: QUESTION PANEL */
+    .q-panel { flex: 1; background: #fff; margin: 10px; border-radius: 4px; display: flex; flex-direction: column; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow: hidden; }
+    
+    .q-top-bar { padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #fff; }
+    .q-num { font-weight: 700; color: #333; }
+    .marks { font-size: 0.85rem; color: #666; }
+    .marks .pos { color: var(--green); font-weight: bold; }
+    .marks .neg { color: var(--red); }
+
+    .q-body { flex: 1; padding: 20px; overflow-y: auto; }
+    
+    .question-text { font-size: 1.15rem; line-height: 1.6; color: #212121; margin-bottom: 25px; font-weight: 500; }
+    .highlight-part { color: var(--blue); font-weight: bold; padding: 0 2px; }
+
+    /* OPTIONS */
+    .options-list { display: flex; flex-direction: column; gap: 10px; }
+    .option-item { 
+        display: flex; align-items: center; 
+        padding: 12px 15px; 
+        border: 1px solid #d1d5db; 
+        border-radius: 4px; 
+        cursor: pointer; 
+        transition: all 0.1s;
+        background: #fff;
+    }
+    .option-item:hover { background: #f8f9fa; border-color: #9ca3af; }
+    .option-item.selected { border-color: var(--blue); background: #eef6ff; }
+    
+    .radio-circle { 
+        width: 18px; height: 18px; border: 2px solid #9ca3af; border-radius: 50%; margin-right: 15px; 
+        position: relative; display: flex; align-items: center; justify-content: center;
+    }
+    .option-item.selected .radio-circle { border-color: var(--blue); }
+    .option-item.selected .radio-circle::after { content: ''; width: 10px; height: 10px; background: var(--blue); border-radius: 50%; }
+
+    .opt-label { font-size: 1rem; color: #333; }
+
+    /* EXPLANATION BOX */
+    .solution-box { margin-top: 30px; border: 1px solid #cce5ff; background: #f0f7ff; border-radius: 4px; overflow: hidden; display: none; }
+    .sol-header { background: #cce5ff; padding: 10px 15px; font-weight: bold; color: #004085; font-size: 0.9rem; }
+    .sol-body { padding: 15px; color: #333; line-height: 1.6; font-size: 0.95rem; }
+
+    /* FOOTER */
+    .q-footer { padding: 15px 20px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; background: #fff; }
+    .btn { padding: 8px 24px; border: 1px solid #d1d5db; background: #fff; border-radius: 4px; cursor: pointer; font-weight: 600; color: #333; }
+    .btn:hover { background: #f1f2f4; }
+    .btn-save { background: var(--blue); color: white; border: none; }
+    .btn-save:hover { background: #0062cc; }
+
+    /* RIGHT SIDEBAR */
+    .sidebar { width: var(--sidebar-w); background: #fff; border-left: 1px solid var(--border); display: flex; flex-direction: column; }
+    .user-profile { padding: 15px; border-bottom: 1px solid var(--border); background: #f8f9fa; display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 36px; height: 36px; background: #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #555; }
+    
+    .palette-area { flex: 1; padding: 15px; overflow-y: auto; }
+    .palette-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+    .p-btn { 
+        height: 34px; border-radius: 4px; border: 1px solid #d1d5db; background: #fff; 
+        cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; 
+    }
+    .p-btn:hover { background: #eee; }
+    .p-btn.active { border: 2px solid var(--blue); }
+    .p-btn.answered { background: var(--green); color: white; border-color: var(--green); clip-path: polygon(0 0, 100% 0, 100% 75%, 75% 100%, 0 100%); }
+    .p-btn.not-answered { background: var(--red); color: white; border-color: var(--red); }
+
+    /* START SCREEN */
+    #start-screen { position: fixed; inset: 0; background: rgba(255,255,255,0.98); z-index: 100; display: flex; align-items: center; justify-content: center; }
+    .start-card { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); width: 400px; text-align: center; border: 1px solid #eee; }
+    .set-btn { display: block; width: 100%; padding: 15px; margin: 10px 0; background: #fff; border: 2px solid var(--blue); color: var(--blue); font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s; font-size: 1rem; }
+    .set-btn:hover { background: var(--blue); color: white; }
+
+    @media (max-width: 768px) {
+        .sidebar { display: none; }
+        .q-panel { margin: 0; border-radius: 0; }
+        .container { flex-direction: column; }
+        .logo { font-size: 0.8rem; } /* Adjusted for mobile */
+    }
+</style>
+</head>
+<body>
+
+<div id="start-screen">
+    <div class="start-card">
+        <h2 style="margin-top:0; color:#333;">Mirror of Common English</h2>
+        <p style="color:#666; margin-bottom:20px;">Pronoun Chapter • Error Detection</p>
+        <button class="set-btn" onclick="startTest(1)">Start Set 1 (Q1-25)</button>
+        <button class="set-btn" onclick="startTest(2)">Start Set 2 (Q26-50)</button>
+    </div>
+</div>
+
+<header>
+    <div class="logo">Powered by THE SSC SCHOLARS OFFICIAL</div>
+    <div class="timer-box">
+        <span>⏱</span> <span id="timer">15:00</span>
+    </div>
+    <button class="submit-btn" onclick="submitTest()">SUBMIT</button>
+</header>
+
+<div class="container">
+    <div class="q-panel">
+        <div class="q-top-bar">
+            <div class="q-num" id="q-num-disp">Question 1</div>
+            <div class="marks"><span class="pos">+1.0</span> / <span class="neg">-0.25</span></div>
+        </div>
+        
+        <div class="q-body">
+            <div class="question-text" id="q-text">Loading...</div>
+            
+            <div class="options-list" id="options-container"></div>
+
+            <div class="solution-box" id="solution-box">
+                <div class="sol-header">Solution & Explanation</div>
+                <div class="sol-body" id="sol-text"></div>
+            </div>
+        </div>
+
+        <div class="q-footer">
+            <button class="btn" onclick="changeQ(-1)">Previous</button>
+            <button class="btn btn-save" onclick="saveNext()">Save & Next</button>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="user-profile">
+            <div class="avatar">S</div>
+            <div style="font-size:0.9rem; font-weight:600;">The SSC Scholars</div>
+        </div>
+        <div style="padding:10px 15px; font-weight:bold; color:#555; font-size:0.85rem; background:#f1f2f4;">Questions Palette</div>
+        <div class="palette-area">
+            <div class="palette-grid" id="palette-grid"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// --- FULL DETAILED DATA ---
+const allQuestions = [
+    // SET 1
+    { q: "The Board of Directors (A) / want all possible facilities (B) / and allowances for (C) / itself. (D) / No Error (E)", ans: 3, sol: "Part (D) में 'itself' के बदले 'themselves' का प्रयोग होगा। यहाँ 'Board of Directors' से सदस्यों का बोध हो रहा है (क्योंकि Verb 'want' Plural है), इसलिए Pronoun भी Plural (themselves) आएगा।" },
+    { q: "You and I have done (A) / my best in (B) / the examination. (C) / No Error (D)", ans: 1, sol: "Part (B) में 'my' के बदले 'our' होगा। जब First Person (I) और Second Person (You) मिलकर Subject बनते हैं, तो Possessive 'our' होता है (Order: 231 -> 1 plural)।" },
+    { q: "His efforts (A) / will bring him (B) / more success (C) / than your. (D) / No Error (E)", ans: 3, sol: "Part (D) में 'your' के बदले 'yours' होगा। 'Your' एक Adjective है जिसके बाद Noun चाहिए। यहाँ तुलना 'His efforts' और 'Yours' (Your efforts) के बीच है।" },
+    { q: "Every teacher and (A) / every student of this college (B) / is determined to do their best for the glorious prospects of (C) / the college. (D) / No Error (E)", ans: 2, sol: "Part (C) में 'their' के बदले 'his' होगा। जब दो Singular Nouns 'and' से जुड़े हों और उनके पहले 'Every' हो, तो Pronoun Singular (his) प्रयोग होता है।" },
+    { q: "The Vice-President of India and the Vice-Chancellor of (A) / this university (B) / have given (C) / his consent to join the meeting. (D) / No Error (E)", ans: 3, sol: "Part (D) में 'his' के बदले 'their' होगा। यहाँ दो अलग-अलग व्यक्ति हैं (The Vice-President और The Vice-Chancellor), इसलिए Plural Pronoun लगेगा।" },
+    { q: "She hates everybody (A) / and everything who (B) / reminds her (C) / of her mistakes. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'who' के बदले 'that' होगा। जब Antecedents में एक व्यक्ति (everybody) और एक वस्तु (everything) हो, तो Relative Pronoun 'that' का प्रयोग होता है।" },
+    { q: "None (A) / of these two Principals (B) / has been looking (C) / after his college well. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'None' के बदले 'Neither' होगा। दो व्यक्तियों के लिए 'Neither' का प्रयोग होता है, 'None' का प्रयोग दो से अधिक के लिए होता है।" },
+    { q: "Each of the four great tragedies (A) / of Shakespeare (B) / is worthreading. (C) / No Error (D)", ans: 3, sol: "No Error. 'Each' का प्रयोग दो या दो से अधिक के लिए सही है।" },
+    { q: "He prostrated before (A) / his master (B) / who had returned from (C) / London after a year. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'prostrated' के बाद 'himself' का प्रयोग होगा। Prostrate, enjoy, absent आदि Transitive Verbs हैं, अगर Object न हो तो Reflexive Pronoun लगता है।" },
+    { q: "The dog (A) / I have bought (B) / looks more ferocious (C) / than you have. (D) / No Error (E)", ans: 3, sol: "Part (D) में 'than you have' के बदले 'than the one you have' होगा। तुलना दो कुत्तों के बीच है, इसलिए 'the one' (for dog) लगाना आवश्यक है।" },
+    { q: "He was much (A) / more surprised than me (B) / to see the dancing girl (C) / coming towards us. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'me' के बदले 'I' होगा। तुलना Subject (He) की हो रही है, इसलिए 'than I' (Nominative case) का प्रयोग सही है।" },
+    { q: "The five brothers (A) / are at daggers drawn, (B) / so they feel it below their dignity (C) / to talk to each other. (D) / No Error (E)", ans: 3, sol: "Part (D) में 'each other' के बदले 'one another' होगा। दो से अधिक (five brothers) के लिए 'one another' का प्रयोग होता है।" },
+    { q: "One should (A) / be true to his (B) / word in all (C) / circumstances. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'his' के बदले 'one's' होगा। Subject 'One' होने पर Possessive Case 'one's' होता है।" },
+    { q: "If someone has (A) / finished the work, he may (B) / go home. (C) / No Error (D)", ans: 3, sol: "No Error. Someone के साथ Singular Verb और Singular Pronoun (he) का प्रयोग सही है।" },
+    { q: "The criminal (A) / which was chained (B) / grumbled at the Police Inspector (C) / who was taking him to jail. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'which' के बदले 'who' होगा। Criminal (इंसान) के लिए Relative Pronoun 'who' का प्रयोग होता है।" },
+    { q: "Everybody (A) / who was working in that office gave (B) / a day's pay as their contributions (C) / to the dependants of Dr. Sonu... (D) / No Error (E)", ans: 2, sol: "Part (C) में 'their' के बदले 'his' होगा। 'Everybody' के लिए Singular Possessive 'his' का प्रयोग होता है।" },
+    { q: "The officer (A) / as well as the assistants (B) / absented themselves (C) / from the office. (D) / No Error (E)", ans: 2, sol: "Part (C) में 'themselves' के बदले 'himself' होगा। 'As well as' में Verb और Pronoun पहले Subject (The officer - Singular) के अनुसार होते हैं।" },
+    { q: "As a student (A) / of science (B) / you are far better (C) / than him. (D) / No Error (E)", ans: 3, sol: "Part (D) में 'him' के बदले 'he' होगा। तुलना Subject 'You' से है, इसलिए Nominative Case 'than he' सही है।" },
+    { q: "He introduced (A) / to the Chairman as (B) / the General Secretary (C) / of that party. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'introduced' के बाद 'himself' लगेगा। क्योंकि उसने 'किसको' introduce किया, यह नहीं लिखा है। (Reflexive Pronoun needed)." },
+    { q: "The players (A) / whom we have selected (B) / for our team (C) / are young and ambitious. (D) / No Error (E)", ans: 4, sol: "No Error. वाक्य पूर्णतः शुद्ध है।" },
+    { q: "The guests (A) / whom we were talking about (B) / have come are my (C) / brothers-in-law. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'whom' के बदले 'who' होगा। वाक्य में 'have come' Verb के लिए Subject गायब है, इसलिए 'Who' (Subjective Case) चाहिए।" },
+    { q: "There is none (A) / who can help you (B) / in this crucial moment (C) / of your career. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'who' के बदले 'that' होगा। None, All, Only आदि के बाद Relative Pronoun 'that' का प्रयोग होता है।" },
+    { q: "This is the same (A) / dog which barked (B) / at him but fortunately did not (C) / bite him. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'which' के बदले 'that' होगा। 'The same' के बाद Relative Pronoun 'that' का प्रयोग होता है।" },
+    { q: "Whomever (A) / comes late will not be allowed (B) / to mark his presence (C) / in the register. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'Whomever' के बदले 'Whoever' होगा। 'Comes' Verb का Subject चाहिए, इसलिए Nominative Case 'Whoever' लगेगा।" },
+    { q: "The only book (A) / which you carry (B) / in your bag is in (C) / demand now-a-days. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'which' के बदले 'that' होगा। 'The only' के बाद 'that' का प्रयोग होता है।" },
+
+    // SET 2
+    { q: "She is such a (A) / brilliant student (B) / that I (C) / expected. (D) / No Error (E)", ans: 2, sol: "Part (C) में 'that' के बदले 'as' होगा। 'Such' के बाद Relative Pronoun 'as' का प्रयोग होता है (Such...as)।" },
+    { q: "Such a self-sacrificing (A) / man as has come (B) / wins our sympathy (C) / and admiration. (D) / No Error (E)", ans: 4, sol: "No Error. Such के बाद 'as' का प्रयोग सही है।" },
+    { q: "Any of the two (A) / pictures which depict (B) / the real pictures of the present (C) / politicians is worthseeing. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'Any' के बदले 'Either' होगा। 'Any' दो से अधिक के लिए होता है, जबकि 'Either' दो के लिए।" },
+    { q: "Every of the five children (A) / standing in the corner (B) / of the room is dexterous (C) / in paintings. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'Every' के बदले 'Each' या 'Everyone' होगा। 'Every' Adjective है, इसके तुरंत बाद 'of' नहीं आ सकता।" },
+    { q: "He asked for (A) / permission to go out (B) / but his father did (C) / not give. (D) / No Error (E)", ans: 3, sol: "Part (D) में 'give' के बाद 'it' (Object) का प्रयोग होगा। 'Give' Transitive Verb है और यहाँ Object (it) चाहिए (did not give it)।" },
+    { q: "You and myself (A) / will enjoy the party (B) / to be arranged in honour of (C) / the new Chief Justice. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'myself' के बदले 'I' होगा। Reflexive Pronoun (myself) कभी Subject नहीं बन सकता।" },
+    { q: "\"They who are in this room (A) / should not move from the place (B) / where they are standing\", said the (C) / leader of the criminals. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'They' के बदले 'Those' होगा। Relative Pronoun 'who' के Antecedent के रूप में 'Those' का प्रयोग होता है, न कि 'They' का।" },
+    { q: "They also help the poor (A) / who really sympathise (B) / with them in the moments (C) / of distress. (D) / No Error (E)", ans: 4, sol: "No Error. वाक्य सही है।" },
+    { q: "He sent (A) / all the furniture to Patna that (B) / he had bought (C) / in Chennai. (D) / No Error (E)", ans: 1, sol: "Part (B) में क्रम गलत है। Antecedent को Relative Pronoun के पास होना चाहिए। सही: 'He sent to Patna all the furniture that he had bought...'" },
+    { q: "You say it's your problems (A) / but I say it's (B) / my also. (C) / No Error (D)", ans: 2, sol: "Part (C) में 'my' के बदले 'mine' होगा। 'My' Adjective है, इसे Noun चाहिए। यहाँ 'Mine' (My problem) का प्रयोग सही है।" },
+    { q: "The hotels (A) / of Patna are more (B) / luxurious than (C) / Muzaffarpur. (D) / No Error (E)", ans: 3, sol: "Part (D) में 'Muzaffarpur' के पहले 'those of' लगेगा। तुलना 'Hotels of Patna' की 'Hotels of Muzaffarpur' से है।" },
+    { q: "The articles (A) / published in this magazine (B) / are better than (C) / that magazine. (D) / No Error (E)", ans: 3, sol: "Part (D) में 'that magazine' के बदले 'those in that magazine' होगा। तुलना Articles की है।" },
+    { q: "He is one of those who would much rather (A) / sacrifice his life than turn (B) / disloyal to the country. (C) / No Error (D)", ans: 1, sol: "Part (B) में 'his' के बदले 'their' होगा। Antecedent 'those' Plural है, इसलिए Pronoun भी Plural (their) होगा।" },
+    { q: "The Principal ordered (A) / the peon to (B) / let the boys and I (C) / go in. (D) / No Error (E)", ans: 2, sol: "Part (C) में 'I' के बदले 'me' होगा। 'Let' के बाद Objective Case (me) का प्रयोग होता है।" },
+    { q: "He claims to have (A) / read Shakespeare's all great tragedies (B) / who is the greatest (C) / playwright of English. (D) / No Error (E)", ans: 1, sol: "Part (B) में क्रम गलत है। 'all great tragedies of Shakespeare' होना चाहिए ताकि 'who' का Antecedent 'Shakespeare' उसके पास हो।" },
+    { q: "She was more (A) / garrulous than (B) / either of her (C) / three sisters. (D) / No Error (E)", ans: 2, sol: "Part (C) में 'either' के बदले 'any' होगा। तीन बहनों (three sisters) के लिए 'any' का प्रयोग होगा।" },
+    { q: "The candidate (A) / being a graduate, (B) / he is eligible for (C) / the post of Probationary Officer. (D) / No Error (E)", ans: 2, sol: "Part (C) में 'he' का प्रयोग अनावश्यक (Superfluous) है। Subject 'The candidate' पहले ही आ चुका है।" },
+    { q: "Your are (A) / the same (B) / problems as (C) / mine. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'Your' के बदले 'Yours' होगा। यह Subject के रूप में है (Your problems = Yours)।" },
+    { q: "You have never (A) / spoken a word against (B) / your master, (C) / that is a proof of your loyalty. (D) / No Error (E)", ans: 3, sol: "Part (D) में 'that' के बदले 'which' होगा। पूरे Clause को refer करने के लिए 'which' का प्रयोग होता है।" },
+    { q: "He lent me some (A) / money on the condition (B) / that I should return the same (C) / before November. (D) / No Error (E)", ans: 2, sol: "Part (C) में 'the same' के बदले 'it' होगा। Pronoun के रूप में 'the same' का प्रयोग गलत माना जाता है।" },
+    { q: "There were (A) / eight industrious workers (B) / and five lazy one (C) / in this factory. (D) / No Error (E)", ans: 2, sol: "Part (C) में 'one' के बदले 'ones' (Plural) होगा, क्योंकि 'five workers' की बात हो रही है।" },
+    { q: "Under no circumstances (A) / have I harmed (B) / him, and he (C) / knows. (D) / No Error (E)", ans: 3, sol: "Part (D) में 'knows' के बाद 'it' का प्रयोग होगा। 'Know' Transitive Verb है और यहाँ Object (it) चाहिए।" },
+    { q: "The beggar (A) / whom we had suspected (B) / to be guilty turned out (C) / to be innocent. (D) / No Error (E)", ans: 4, sol: "No Error. वाक्य सही है।" },
+    { q: "I ordered (A) / some books on English Grammar (B) / but none (C) / has arrived yet. (D) / No Error (E)", ans: 4, sol: "No Error. None के साथ Singular verb सही है।" },
+    { q: "I don't appreciate (A) / those who laugh (B) / at others without any (C) / apparent reason. (D) / No Error (E)", ans: 4, sol: "No Error. वाक्य सही है।" }
+];
+
+// --- ENGINE ---
+let setQuestions = [];
+let currentIdx = 0;
+let userAnswers = {};
+let isSubmitted = false;
+let timerRef;
+const optionLabels = ["(A)", "(B)", "(C)", "(D)", "No Error (E)"];
+
+function startTest(setNum) {
+    const start = (setNum-1) * 25;
+    const end = start + 25;
+    setQuestions = allQuestions.slice(start, end);
+    
+    document.getElementById('start-screen').style.display = 'none';
+    
+    // Init Palette
+    const pGrid = document.getElementById('palette-grid');
+    pGrid.innerHTML = setQuestions.map((_, i) => 
+        `<div class="p-btn" id="pal-${i}" onclick="jumpTo(${i})">${i+1}</div>`
+    ).join('');
+
+    loadQuestion(0);
+    startTimer();
+}
+
+function startTimer() {
+    let timeLeft = 900; // 15 mins
+    timerRef = setInterval(() => {
+        timeLeft--;
+        let m = Math.floor(timeLeft/60).toString().padStart(2,'0');
+        let s = (timeLeft%60).toString().padStart(2,'0');
+        document.getElementById('timer').innerText = `${m}:${s}`;
+        if(timeLeft <= 0) submitTest();
+    }, 1000);
+}
+
+function loadQuestion(idx) {
+    currentIdx = idx;
+    const qData = setQuestions[idx];
+    
+    // Update Question Text (Highlight markers)
+    let formattedText = qData.q.replace(/\((A|B|C|D|E)\)/g, '<span class="highlight-part">($1)</span>');
+    document.getElementById('q-text').innerHTML = formattedText;
+    document.getElementById('q-num-disp').innerText = `Question ${idx+1}`;
+
+    // Generate Vertical Options
+    const optContainer = document.getElementById('options-container');
+    optContainer.innerHTML = optionLabels.map((label, i) => {
+        const isSelected = userAnswers[idx] === i;
+        return `
+        <div class="option-item ${isSelected ? 'selected' : ''}" onclick="selectOption(${i})">
+            <div class="radio-circle"></div>
+            <span class="opt-label">${label}</span>
+        </div>`;
+    }).join('');
+
+    // Palette Update
+    document.querySelectorAll('.p-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(`pal-${idx}`).classList.add('active');
+
+    // Show Solution if Submitted
+    const solBox = document.getElementById('solution-box');
+    if(isSubmitted) {
+        solBox.style.display = 'block';
+        
+        // Highlight correct/wrong in options
+        const opts = document.querySelectorAll('.option-item');
+        opts[qData.ans].style.border = "2px solid #0acf83";
+        opts[qData.ans].style.background = "#e5fbf2";
+        
+        if(userAnswers[idx] !== undefined && userAnswers[idx] !== qData.ans) {
+            opts[userAnswers[idx]].style.border = "2px solid #f25050";
+            opts[userAnswers[idx]].style.background = "#fef1f1";
+        }
+
+        document.getElementById('sol-text').innerText = qData.sol;
+    } else {
+        solBox.style.display = 'none';
+    }
+}
+
+function selectOption(optIndex) {
+    if(isSubmitted) return;
+    userAnswers[currentIdx] = optIndex;
+    
+    const opts = document.querySelectorAll('.option-item');
+    opts.forEach(o => o.classList.remove('selected'));
+    opts[optIndex].classList.add('selected');
+    
+    document.getElementById(`pal-${currentIdx}`).classList.add('answered');
+}
+
+function saveNext() {
+    if(currentIdx < setQuestions.length - 1) loadQuestion(currentIdx + 1);
+}
+
+function changeQ(dir) {
+    if(currentIdx + dir >= 0 && currentIdx + dir < setQuestions.length) {
+        loadQuestion(currentIdx + dir);
+    }
+}
+
+function jumpTo(idx) {
+    loadQuestion(idx);
+}
+
+function submitTest() {
+    clearInterval(timerRef);
+    isSubmitted = true;
+    document.querySelector('.submit-btn').style.display = 'none';
+    
+    let score = 0;
+    setQuestions.forEach((q, i) => {
+        if(userAnswers[i] === q.ans) score += 1;
+        else if(userAnswers[i] !== undefined) score -= 0.25;
+    });
+    
+    alert(`Test Finished!\nScore: ${score} / ${setQuestions.length}`);
+    loadQuestion(currentIdx); 
+}
+</script>
+</body>
+</html>
+

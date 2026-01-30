@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Superfluous Expressions Mock - THE SSC SCHOLARS</title>
+<style>
+    :root { --blue: #007bff; --green: #0acf83; --red: #f25050; --bg: #f2f3f5; }
+    * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body { margin: 0; background: var(--bg); height: 100vh; display: flex; flex-direction: column; }
+
+    header { background: #fff; padding: 0 20px; height: 60px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
+    .logo { font-weight: 800; color: #333; }
+    .timer { background: #eef2f8; padding: 5px 10px; border-radius: 4px; font-weight: bold; }
+    .submit { background: var(--green); color: white; border: none; padding: 8px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+
+    .container { display: flex; flex: 1; overflow: hidden; }
+    .q-panel { flex: 1; background: #fff; margin: 15px; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    
+    .q-header { padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; font-weight: bold; }
+    .q-body { flex: 1; padding: 20px; overflow-y: auto; }
+    .q-text { font-size: 1.15rem; margin-bottom: 20px; line-height: 1.6; color: #2d3748; }
+    .marker { color: var(--blue); font-weight: bold; background: #ebf8ff; padding: 2px 5px; border-radius: 4px; font-size: 0.9em; margin: 0 2px; }
+
+    .opts { display: flex; flex-direction: column; gap: 10px; }
+    .opt { display: flex; align-items: center; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+    .opt:hover { background: #f7fafc; border-color: #cbd5e0; }
+    .opt.selected { border-color: var(--blue); background: #ebf8ff; }
+    .circle { width: 18px; height: 18px; border: 2px solid #a0aec0; border-radius: 50%; margin-right: 15px; position: relative; }
+    .opt.selected .circle { border-color: var(--blue); }
+    .opt.selected .circle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 8px; height: 8px; background: var(--blue); border-radius: 50%; }
+
+    .sol-box { margin-top: 20px; background: #ebf8ff; border: 1px solid #bee3f8; border-radius: 6px; padding: 15px; display: none; }
+    .sol-title { font-weight: bold; color: #2b6cb0; margin-bottom: 5px; }
+
+    .footer { padding: 15px; border-top: 1px solid #eee; display: flex; justify-content: space-between; }
+    .btn { padding: 8px 20px; border: 1px solid #ccc; background: white; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    .btn-save { background: var(--blue); color: white; border: none; }
+
+    .sidebar { width: 280px; background: white; border-left: 1px solid #ddd; display: flex; flex-direction: column; }
+    .pal-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; overflow-y: auto; }
+    .pal-btn { height: 35px; border: 1px solid #ddd; background: white; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #555; }
+    .pal-btn.active { border-color: var(--blue); color: var(--blue); border-width: 2px; }
+    .pal-btn.done { background: var(--green); color: white; border-color: var(--green); }
+
+    #start { position: fixed; inset: 0; background: rgba(255,255,255,0.98); z-index: 100; display: flex; align-items: center; justify-content: center; }
+    .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 400px; text-align: center; border: 1px solid #ddd; }
+    .start-btn { width: 100%; padding: 15px; margin: 10px 0; background: white; border: 2px solid var(--blue); color: var(--blue); font-weight: bold; border-radius: 8px; cursor: pointer; text-align: left; }
+    .start-btn:hover { background: var(--blue); color: white; }
+
+    @media(max-width:768px) { .sidebar{display:none;} .container{flex-direction:column;} }
+</style>
+</head>
+<body>
+
+<div id="start">
+    <div class="card">
+        <h2>Superfluous Expressions</h2>
+        <p>Mirror of Common English • Chapter 14</p>
+        <button class="start-btn" onclick="start(1)">Start Test (Q1-25)</button>
+    </div>
+</div>
+
+<header>
+    <div class="logo">THE SSC SCHOLARS OFFICIAL</div>
+    <div class="timer" id="time">15:00</div>
+    <button class="submit" onclick="submit()">SUBMIT</button>
+</header>
+
+<div class="container">
+    <div class="q-panel">
+        <div class="q-header">
+            <span id="q-idx">Q1</span>
+            <span>+1.0 / -0.25</span>
+        </div>
+        <div class="q-body">
+            <div class="q-text" id="q-txt"></div>
+            <div class="opts" id="opts"></div>
+            <div class="sol-box" id="sol">
+                <div class="sol-title">Solution</div>
+                <div id="sol-txt"></div>
+            </div>
+        </div>
+        <div class="footer">
+            <button class="btn" onclick="nav(-1)">Prev</button>
+            <button class="btn btn-save" onclick="nav(1)">Save & Next</button>
+        </div>
+    </div>
+    <div class="sidebar">
+        <div style="padding:15px;border-bottom:1px solid #eee;font-weight:bold">Questions</div>
+        <div class="pal-grid" id="pal"></div>
+    </div>
+</div>
+
+<script>
+const db = [
+    { t: "All the members (A) / of the Board are (B) / kindly requested to (C) / appear in the next meeting. (D) / No Error (E)", a: 2, s: "Part (C): 'kindly' का प्रयोग अनावश्यक (Superfluous) है। 'Requested' में विनम्रता का भाव निहित है, इसलिए Active Voice में 'Kindly/Please' का प्रयोग होता है, लेकिन Passive Voice में 'You are requested' के साथ kindly/please का प्रयोग वर्जित है।" },
+    { t: "Pakistan's support (A) / to the terrorists of India (B) / should be universally condemned (C) / by all. (D) / No Error (E)", a: 3, s: "Part (D): 'by all' का प्रयोग अनावश्यक है। 'Universally' का अर्थ ही होता है 'by all' (सर्वत्र/सबके द्वारा)। अतः 'should be universally condemned' पर्याप्त है।" },
+    { t: "Within an hour's (A) / journey we (B) / will approach near (C) / Patna. (D) / No Error (E)", a: 2, s: "Part (C): 'near' का प्रयोग नहीं होगा। 'Approach' का अर्थ है 'to come near' (निकट आना)। अतः इसके साथ 'near' का प्रयोग Superfluous है।" },
+    { t: "Supposing if (A) / all your problems (B) / had been solved, (C) / what would you have done? (D) / No Error (E)", a: 0, s: "Part (A): 'Supposing' और 'if' का प्रयोग एक साथ नहीं होता क्योंकि दोनों का अर्थ (यदि/मानो) समान है। या तो 'Supposing' का प्रयोग करें या 'If' का।" },
+    { t: "When he lent me (A) / some books, he asked (B) / me to return them back (C) / by the end of the month. (D) / No Error (E)", a: 2, s: "Part (C): 'back' का प्रयोग नहीं होगा। 'Return' का अर्थ ही है 'Give back' (वापस करना)। अतः Return के साथ Back का प्रयोग Superfluous है।" },
+    { t: "He denied (A) / that he was not (B) / present at the spot of (C) / occurrence. (D) / No Error (E)", a: 1, s: "Part (B): 'not' का प्रयोग नहीं होगा। 'Deny' (इनकार करना) अपने आप में Negative है, इसके बाद वाले Clause में 'not' का प्रयोग नहीं किया जाता।" },
+    { t: "My father asked me (A) / if I had (B) / sufficient enough money (C) / to pay the fees. (D) / No Error (E)", a: 2, s: "Part (C): 'sufficient' और 'enough' दोनों का अर्थ 'पर्याप्त' होता है। अतः दोनों का एक साथ प्रयोग गलत है। सिर्फ 'enough money' या 'sufficient money' का प्रयोग करें।" },
+    { t: "One of my best friends (A) / is in the teaching line (B) / but he lives (C) / abroad. (D) / No Error (E)", a: 1, s: "Part (B): 'teaching line' के बदले 'teaching profession' का प्रयोग बेहतर है। 'Line' का प्रयोग 'profession' के अर्थ में Slang (अमानक) माना जाता है।" },
+    { t: "Now-a-days he (A) / is living in foreign (B) / but his parents (C) / still live in India. (D) / No Error (E)", a: 1, s: "Part (B): 'in foreign' के बदले 'abroad' का प्रयोग होगा। 'Foreign' एक Adjective है (e.g., foreign country), इसे Noun की तरह या 'विदेश' के अर्थ में अकेले प्रयोग नहीं किया जाता।" },
+    { t: "According to me (A) / every student of English literature (B) / must read all the best (C) / tragedies of Shakespeare. (D) / No Error (E)", a: 0, s: "Part (A): 'According to me' का प्रयोग गलत है। इसके बदले 'In my opinion' का प्रयोग करना चाहिए। 'According to' का प्रयोग 2nd या 3rd Person के साथ होता है (e.g., According to you/him)।" },
+    { t: "To what has always (A) / puzzled me is why we had to wait (B) / for the British to promote the development (C) / of our hill stations. (D) / No Error (E)", a: 0, s: "Part (A): 'To' का प्रयोग अनावश्यक है। वाक्य का Subject 'What has always puzzled me' है, इसलिए 'To' हटा दें।" },
+    { t: "All his family members (A) / are working on (B) / some of the (C) / prestigious posts. (D) / No Error (E)", a: 0, s: "Part (A): 'All his family members' गलत है। सही प्रयोग 'All the members of his family' होगा। (Note: 'Family members' को ग्रामर में Slang माना जाता है)।" },
+    { t: "In spite of his insincerity (A) / he was awarded (B) / cent-percent marks (C) / in mathematics. (D) / No Error (E)", a: 2, s: "Part (C): 'cent-percent' के बदले '100 percent' या 'full marks' का प्रयोग होगा। 'Cent-percent' एक Slang है।" },
+    { t: "The passing marks (A) / in this paper are thirty (B) / three but you have got (C) / just thirty. (D) / No Error (E)", a: 0, s: "Part (A): 'passing marks' के बदले 'pass marks' का प्रयोग होगा। 'Passing marks' Slang है।" },
+    { t: "Many pupils of this department (A) / are working as teachers (B) / in different public schools (C) / of the city. (D) / No Error (E)", a: 0, s: "Part (A): 'pupils' के बदले 'students' का प्रयोग होगा। 'Pupil' का प्रयोग सामान्यतः स्कूली छात्रों (जो गुरु के संरक्षण में हों) के लिए होता है, जबकि कॉलेज/विभाग के लिए 'Students' का प्रयोग होता है।" },
+    { t: "Each competitor (A) / tried his best (B) / to defeat (C) / the one another. (D) / No Error (E)", a: 3, s: "Part (D): 'the one another' के बदले 'the other' या सिर्फ 'one another' का प्रयोग होगा। 'Competitor' (प्रतिद्वंदी) एक दूसरे को हराने की कोशिश करते हैं।" },
+    { t: "As my neighbourers (A) / are very co-operative (B) / I do not (C) / feel any difficulty. (D) / No Error (E)", a: 0, s: "Part (A): 'neighbourers' कोई शब्द नहीं है। सही शब्द 'neighbours' है।" },
+    { t: "He ran as fastly (A) / as he could to (B) / win the race but (C) / ultimately he lost. (D) / No Error (E)", a: 0, s: "Part (A): 'fastly' कोई शब्द नहीं है। 'Fast' Adjective और Adverb दोनों रूपों में 'Fast' ही रहता है। (He ran as fast as he could)।" },
+    { t: "Both of them have (A) / not turned up (B) / in this (C) / court. (D) / No Error (E)", a: 0, s: "Part (A): 'Both...not' का प्रयोग गलत है। इसके बदले 'Neither of them has' का प्रयोग होगा। (Both का प्रयोग Negative वाक्य में नहीं किया जाता)।" },
+    { t: "He put his sign (A) / at the foot of the (B) / letter and posted it (C) / without delay. (D) / No Error (E)", a: 0, s: "Part (A): 'sign' के बदले 'signature' का प्रयोग होगा। 'Sign' Verb है (हस्ताक्षर करना) और 'Signature' Noun है (हस्ताक्षर)।" },
+    { t: "The officer asked me (A) / to talk to the (B) / concerned clerk (C) / for any difficulty in payment. (D) / No Error (E)", a: 2, s: "Part (C): 'concerned clerk' का अर्थ 'चिंतित क्लर्क' हो सकता है। सही अर्थ (संबंधित क्लर्क) के लिए 'clerk concerned' का प्रयोग करें। (Noun + Concerned = संबंधित, Concerned + Noun = चिंतित)।" },
+    { t: "He was (A) / very friendly enough (B) / to help me when (C) / I was in distress. (D) / No Error (E)", a: 1, s: "Part (B): 'very' का प्रयोग अनावश्यक है। 'Enough' के पहले Positive Degree (friendly) का प्रयोग होता है और 'very' की आवश्यकता नहीं है क्योंकि Enough स्वयं मात्रा बताता है।" },
+    { t: "The old man asked me (A) / if there was any (B) / place in (C) / the compartment. (D) / No Error (E)", a: 2, s: "Part (C): 'place' के बदले 'room' का प्रयोग होगा। ट्रेन, बस या बेंच पर खाली जगह के लिए 'Room' का प्रयोग किया जाता है, 'Place' का नहीं।" },
+    { t: "I have learnt (A) / that a lot of (B) / students have applied (C) / for freeship. (D) / No Error (E)", a: 3, s: "Part (D): 'freeship' के बदले 'free-studentship' का प्रयोग होगा। 'Freeship' एक Slang है।" },
+    { t: "I requested him (A) / to repeat the (B) / question again. (C) / No Error (D) (E)", a: 2, s: "Part (C): 'again' का प्रयोग नहीं होगा। 'Repeat' का अर्थ ही है 'to say again'।" }
+];
+
+let curQ = 0, qList = [], uAns = {}, sub = false, tmr;
+
+function start(set) {
+    document.getElementById('start').style.display = 'none';
+    qList = db;
+    let h = '';
+    qList.forEach((_, i) => h += `<div class="pal-btn" id="p${i}" onclick="jump(${i})">${i+1}</div>`);
+    document.getElementById('pal').innerHTML = h;
+    load(0);
+    let t = 900;
+    tmr = setInterval(() => {
+        t--;
+        let m = Math.floor(t/60).toString().padStart(2,'0');
+        let s = (t%60).toString().padStart(2,'0');
+        document.getElementById('time').innerText = m+':'+s;
+        if(t<=0) submit();
+    }, 1000);
+}
+
+function load(i) {
+    curQ = i;
+    let d = qList[i];
+    let txt = d.t.replace(/\(([A-E])\)/g, '<span class="marker">($1)</span>');
+    document.getElementById('q-txt').innerHTML = txt;
+    document.getElementById('q-idx').innerText = 'Q' + (i+1);
+    let hasE = d.t.includes("(E)");
+    let opts = ["(A)", "(B)", "(C)", "(D)"];
+    if(hasE) opts.push("No Error (E)");
+    else opts[3] = "No Error (D)"; 
+    let h = '';
+    opts.forEach((l, idx) => {
+        let sel = uAns[i] === idx ? 'selected' : '';
+        let style = '';
+        if(sub) {
+            if(idx === d.a) style = 'border-color:#0acf83; background:#e5fbf2;';
+            else if(sel && idx !== d.a) style = 'border-color:#f25050; background:#fef1f1;';
+        }
+        h += `<div class="opt ${sel}" style="${style}" onclick="pick(${idx})">
+            <div class="circle"></div><span>${l}</span>
+        </div>`;
+    });
+    document.getElementById('opts').innerHTML = h;
+    document.querySelectorAll('.pal-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('p'+i).classList.add('active');
+    if(sub) {
+        document.getElementById('sol').style.display = 'block';
+        document.getElementById('sol-txt').innerText = d.s;
+    } else {
+        document.getElementById('sol').style.display = 'none';
+    }
+}
+
+function pick(o) {
+    if(sub) return;
+    uAns[curQ] = o;
+    document.getElementById('p'+curQ).classList.add('done');
+    load(curQ);
+}
+
+function nav(d) {
+    let n = curQ + d;
+    if(n >= 0 && n < qList.length) load(n);
+}
+
+function jump(i) { load(i); }
+
+function submit() {
+    clearInterval(tmr);
+    sub = true;
+    document.querySelector('.submit').style.display = 'none';
+    let sc = 0;
+    qList.forEach((q, i) => {
+        if(uAns[i] === q.a) sc += 1;
+        else if(uAns[i] !== undefined) sc -= 0.25;
+    });
+    alert('Score: ' + sc);
+    load(curQ);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - THE SSC SCHOLARS OFFICIAL</title>
+<style>
+    :root { 
+        --primary: #007bff; 
+        --bg: #f4f6f9; 
+        --card-bg: #ffffff;
+        --text: #333;
+    }
+    
+    body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 0; }
+    
+    /* HEADER */
+    .header { background: #fff; padding: 15px 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+    .logo { font-size: 1.2rem; font-weight: 800; color: #1a202c; text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
+    .logo span { background: var(--primary); color: white; padding: 2px 8px; border-radius: 4px; }
+    
+    /* BANNER */
+    .banner { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); color: white; padding: 40px 20px; text-align: center; }
+    .banner h1 { margin: 0; font-size: 2rem; }
+    .banner p { opacity: 0.9; margin-top: 10px; font-size: 1.1rem; }
+
+    /* GRID CONTAINER */
+    .container { max-width: 1200px; margin: -30px auto 40px; padding: 0 20px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+
+    /* CHAPTER CARD */
+    .card { background: var(--card-bg); border-radius: 12px; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: transform 0.3s, box-shadow 0.3s; border-top: 5px solid var(--primary); cursor: pointer; text-decoration: none; color: inherit; display: block; }
+    .card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+    
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+    .icon { width: 50px; height: 50px; background: #eef6ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--primary); }
+    .badge { background: #e2e8f0; font-size: 0.8rem; padding: 4px 8px; border-radius: 4px; font-weight: bold; color: #475569; }
+    
+    .card h3 { margin: 0 0 10px 0; font-size: 1.25rem; color: #2d3748; }
+    .card p { margin: 0; color: #718096; font-size: 0.95rem; }
+    
+    .card-footer { margin-top: 20px; padding-top: 15px; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
+    .btn { color: var(--primary); font-weight: 700; font-size: 0.95rem; }
+    .status { font-size: 0.85rem; color: #22c55e; font-weight: 600; }
+
+    @media (max-width: 768px) {
+        .banner h1 { font-size: 1.5rem; }
+        .grid { grid-template-columns: 1fr; }
+    }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <div class="logo"><span>SSC</span> SCHOLARS OFFICIAL</div>
+    <div style="font-weight:600; color:#555;">Mirror of Common English</div>
+</div>
+
+<div class="banner">
+    <h1>Complete Mock Test Series</h1>
+    <p>Chapter-wise Practice for SSC Stenographer & Other Exams</p>
+</div>
+
+<div class="container">
+    <div class="grid">
+        
+        <a href="Mirror of Common Errors - Articles.html" class="card">
+            <div class="card-header">
+                <div class="icon">A</div>
+                <span class="badge">Ch-1</span>
+            </div>
+            <h3>Articles</h3>
+            <p>Usage of A, An, The and Omission.</p>
+            <div class="card-footer">
+                <span class="btn">Start Test →</span>
+                <span class="status">50 Questions</span>
+            </div>
+        </a>
+
+        <a href="Mirror of Common Errors - Noun-Cases.html" class="card">
+            <div class="card-header">
+                <div class="icon">N</div>
+                <span class="badge">Ch-2</span>
+            </div>
+            <h3>Nouns & Cases</h3>
+            <p>Possessive Case & Apostrophe Rules.</p>
+            <div class="card-footer">
+                <span class="btn">Start Test →</span>
+                <span class="status">51 Questions</span>
+            </div>
+        </a>
+
+        <a href="Mirror of Common Errors - Noun-Numbers.html" class="card">
+            <div class="card-header">
+                <div class="icon">#</div>
+                <span class="badge">Ch-3</span>
+            </div>
+            <h3>Nouns & Numbers</h3>
+            <p>Singular & Plural Formations.</p>
+            <div class="card-footer">
+                <span class="btn">Start Test →</span>
+                <span class="status">50 Questions</span>
+            </div>
+        </a>
+
+        <a href="Mirror of Common Errors - Subject Verb Agreement.html" class="card">
+            <div class="card-header">
+                <div class="icon">S</div>
+                <span class="badge">Ch-4</span>
+            </div>
+            <h3>Subject-Verb Agreement</h3>
+            <p>Matching Subject with Correct Verb.</p>
+            <div class="card-footer">
+                <span class="btn">Start Test →</span>
+                <span class="status">52 Questions</span>
+            </div>
+        </a>
+
+        <a href="Mirror of Common Errors - Time and Tenses.html" class="card">
+            <div class="card-header">
+                <div class="icon">T</div>
+                <span class="badge">Ch-5</span>
+            </div>
+            <h3>Time & Tenses</h3>
+            <p>Sequence of Tense & Conditionals.</p>
+            <div class="card-footer">
+                <span class="btn">Start Test →</span>
+                <span class="status">52 Questions</span>
+            </div>
+        </a>
+
+        <a href="Mirror of Common Errors - Pronoun.html" class="card">
+            <div class="card-header">
+                <div class="icon">P</div>
+                <span class="badge">Ch-6</span>
+            </div>
+            <h3>Pronouns</h3>
+            <p>Personal, Relative & Reflexive Pronouns.</p>
+            <div class="card-footer">
+                <span class="btn">Start Test →</span>
+                <span class="status">50 Questions</span>
+            </div>
+        </a>
+
+        <a href="Mirror of Common Errors - Adjectives.html" class="card">
+            <div class="card-header">
+                <div class="icon">Aj</div>
+                <span class="badge">Ch-7</span>
+            </div>
+            <h3>Adjectives</h3>
+            <p>Degrees of Comparison & Usage.</p>
+            <div class="card-footer">
+                <span class="btn">Start Test →</span>
+                <span class="status">50 Questions</span>
+            </div>
+        </a>
+
+        <a href="Mirror of Common Errors - Verbs.html" class="card">
+            <div class="card-header">
+                <div class="icon">V</div>
+                <span class="badge">Ch-8</span>
+            </div>
+            <h3>Verbs</h3>
+            <p>Modals, Infinitives & Participles.</p>
+            <div class="card-footer">
+                <span class="btn">Start Test →</span>
+                <span class="status">51 Questions</span>
+            </div>
+        </a>
+
+        <a href="Mirror of Common Errors - Adverb.html" class="card">
+            <div class="card-header">
+                <div class="icon">Av</div>
+                <span class="badge">Ch-9</span>
+            </div>
+            <h3>Adverbs</h3>
+            <p>Adverbs of Manner, Place & Time.</p>
+            <div class="card-footer">
+                <span class="btn">Start Test →</span>
+                <span class="status">51 Questions</span>
+            </div>
+        </a>
+
+        <a href="Mirror of Common Errors - Conjuction.html" class="card">
+            <div class="card-header">
+                <div class="icon">C</div>
+                <span class="badge">Ch-10</span>
+            </div>
+            <h3>Conjunctions</h3>
+            <p>Connectors & Pairing Rules.</p>
+            <div class="card-footer">
+                <span class="btn">Start Test →</span>
+                <span class="status">51 Questions</span>
+            </div>
+        </a>
+
+        <a href="Mirror of Common Errors - Voice.html" class="card">
+            <div class="card-header">
+                <div class="icon">Vc</div>
+                <span class="badge">Ch-11</span>
+            </div>
+            <h3>Voice (Active/Passive)</h3>
+            <p>Transformation of Sentences.</p>
+            <div class="card-footer">
+                <span class="btn">Start Test →</span>
+                <span class="status">45 Questions</span>
+            </div>
+        </a>
+
+        <a href="Mirror of Common Errors - Narration.html" class="card">
+            <div class="card-header">
+                <div class="icon">Nr</div>
+                <span class="badge">Ch-12</span>
+            </div>
+            <h3>Narration</h3>
+            <p>Direct & Indirect Speech.</p>
+            <div class="card-footer">
+                <span class="btn">Start Test →</span>
+                <span class="status">50 Questions</span>
+            </div>
+        </a>
+
+        <a href="Mirror of Common Errors - Superfluous.html" class="card">
+            <div class="card-header">
+                <div class="icon">S</div>
+                <span class="badge">Ch-14</span>
+            </div>
+            <h3>Superfluous Expressions</h3>
+            <p>Slang & Redundancy Errors.</p>
+            <div class="card-footer">
+                <span class="btn">Start Test →</span>
+                <span class="status">25 Questions</span>
+            </div>
+        </a>
+
+    </div>
+</div>
+
+<footer style="text-align:center; padding:20px; color:#666; font-size:0.9rem;">
+    &copy; 2026 THE SSC SCHOLARS OFFICIAL. All Rights Reserved.
+</footer>
+
+</body>
+</html>

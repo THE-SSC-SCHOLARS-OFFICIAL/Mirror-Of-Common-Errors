@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verbs Mock Test - THE SSC SCHOLARS</title>
+<style>
+    :root { --blue: #007bff; --green: #0acf83; --red: #f25050; --bg: #f2f3f5; }
+    * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body { margin: 0; background: var(--bg); height: 100vh; display: flex; flex-direction: column; }
+
+    /* Header */
+    header { background: #fff; padding: 0 20px; height: 60px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
+    .logo { font-weight: 800; color: #333; }
+    .timer { background: #eef2f8; padding: 5px 10px; border-radius: 4px; font-weight: bold; }
+    .submit { background: var(--green); color: white; border: none; padding: 8px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+
+    /* Main */
+    .container { display: flex; flex: 1; overflow: hidden; }
+    .q-panel { flex: 1; background: #fff; margin: 15px; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    
+    .q-header { padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; font-weight: bold; }
+    .q-body { flex: 1; padding: 20px; overflow-y: auto; }
+    .q-text { font-size: 1.15rem; margin-bottom: 20px; line-height: 1.6; color: #2d3748; }
+    .marker { color: var(--blue); font-weight: bold; background: #ebf8ff; padding: 2px 5px; border-radius: 4px; font-size: 0.9em; margin: 0 2px; }
+
+    /* Options */
+    .opts { display: flex; flex-direction: column; gap: 10px; }
+    .opt { display: flex; align-items: center; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+    .opt:hover { background: #f7fafc; border-color: #cbd5e0; }
+    .opt.selected { border-color: var(--blue); background: #ebf8ff; }
+    .circle { width: 18px; height: 18px; border: 2px solid #a0aec0; border-radius: 50%; margin-right: 15px; position: relative; }
+    .opt.selected .circle { border-color: var(--blue); }
+    .opt.selected .circle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 8px; height: 8px; background: var(--blue); border-radius: 50%; }
+
+    /* Solution */
+    .sol-box { margin-top: 20px; background: #ebf8ff; border: 1px solid #bee3f8; border-radius: 6px; padding: 15px; display: none; }
+    .sol-title { font-weight: bold; color: #2b6cb0; margin-bottom: 5px; }
+
+    /* Footer */
+    .footer { padding: 15px; border-top: 1px solid #eee; display: flex; justify-content: space-between; }
+    .btn { padding: 8px 20px; border: 1px solid #ccc; background: white; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    .btn-save { background: var(--blue); color: white; border: none; }
+
+    /* Sidebar */
+    .sidebar { width: 280px; background: white; border-left: 1px solid #ddd; display: flex; flex-direction: column; }
+    .pal-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; overflow-y: auto; }
+    .pal-btn { height: 35px; border: 1px solid #ddd; background: white; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #555; }
+    .pal-btn.active { border-color: var(--blue); color: var(--blue); border-width: 2px; }
+    .pal-btn.done { background: var(--green); color: white; border-color: var(--green); }
+
+    /* Start Screen */
+    #start { position: fixed; inset: 0; background: rgba(255,255,255,0.98); z-index: 100; display: flex; align-items: center; justify-content: center; }
+    .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 400px; text-align: center; border: 1px solid #ddd; }
+    .start-btn { width: 100%; padding: 15px; margin: 10px 0; background: white; border: 2px solid var(--blue); color: var(--blue); font-weight: bold; border-radius: 8px; cursor: pointer; text-align: left; }
+    .start-btn:hover { background: var(--blue); color: white; }
+
+    @media(max-width:768px) { .sidebar{display:none;} .container{flex-direction:column;} }
+</style>
+</head>
+<body>
+
+<div id="start">
+    <div class="card">
+        <h2>Chapter 8: Verbs</h2>
+        <p>Mirror of Common English</p>
+        <button class="start-btn" onclick="start(1)">Set 1 (Q1-25)</button>
+        <button class="start-btn" onclick="start(2)">Set 2 (Q26-51)</button>
+    </div>
+</div>
+
+<header>
+    <div class="logo">THE SSC SCHOLARS OFFICIAL</div>
+    <div class="timer" id="time">15:00</div>
+    <button class="submit" onclick="submit()">SUBMIT</button>
+</header>
+
+<div class="container">
+    <div class="q-panel">
+        <div class="q-header">
+            <span id="q-idx">Q1</span>
+            <span>+1.0 / -0.25</span>
+        </div>
+        <div class="q-body">
+            <div class="q-text" id="q-txt"></div>
+            <div class="opts" id="opts"></div>
+            <div class="sol-box" id="sol">
+                <div class="sol-title">Solution</div>
+                <div id="sol-txt"></div>
+            </div>
+        </div>
+        <div class="footer">
+            <button class="btn" onclick="nav(-1)">Prev</button>
+            <button class="btn btn-save" onclick="nav(1)">Save & Next</button>
+        </div>
+    </div>
+    <div class="sidebar">
+        <div style="padding:15px;border-bottom:1px solid #eee;font-weight:bold">Questions</div>
+        <div class="pal-grid" id="pal"></div>
+    </div>
+</div>
+
+<script>
+const db = [
+    // SET 1 (Q1-25)
+    { t: "You must (A) / not held in high esteem (B) / those who are (C) / dangers to our society. (D) / No Error (E)", a: 1, s: "Part (B): 'held' के बदले 'hold' का प्रयोग होगा क्योंकि 'held', 'hold' का Past form है जबकि Modal Auxiliary Verbs (can, could, must etc.) के बाद Verb हमेशा अपने First Form (V1) में होता है।" },
+    { t: "He is very drunk, so he cannot tell (A) / you even his (B) / name. (C) / No Error (D) (E)", a: 4, s: "No Error. वाक्य शुद्ध है।" },
+    { t: "The problems that our (A) / country has and will face (B) / are the outcome of the selfishness (C) / of our so called saviours. (D) / No Error (E)", a: 1, s: "Part (B): 'has' के बाद 'faced' का प्रयोग होगा। जब दो Auxiliary Verbs अलग-अलग forms लेते हों (Has + V3, Will + V1), तो दोनों के लिए Main Verb स्पष्ट करना चाहिए।" },
+    { t: "Never before (A) / the students of India have so much been (B) / frustrated / as today when the problems (C) / of unemployment are dominant. (D) / No Error (E)", a: 1, s: "Part (B): 'the students of India have' के बदले 'have the students of India' होगा। 'Never before' से शुरू होने वाले वाक्य में Inversion (Aux + Sub) का प्रयोग होता है।" },
+    { t: "It being a stormy night, (A) / you must thought of postponing (B) / all your programmes (C) / till tomorrow morning. (D) / No Error (E)", a: 1, s: "Part (B): 'thought' के बदले 'think' का प्रयोग होगा। Must (Modal) + V1।" },
+    { t: "Do you doubted about (A) / the success of this boy, (B) / who is used to working (C) / hard in all circumstances. (D) / No Error (E)", a: 0, s: "Part (A): 'doubted' के बदले 'doubt' का प्रयोग होगा। Do/Does/Did के बाद V1 आता है।" },
+    { t: "We would also like to help you if you intend to execute (A) / such lofty plans for the welfare (B) / of the society. (C) / No Error (D) (E)", a: 4, s: "No Error. वाक्य शुद्ध है।" },
+    { t: "The unreasonable behaviour (A) / of his daughter (B) / was thoroughly (C) / upset Mr. Gupta. (D) / No Error (E)", a: 2, s: "Part (C): 'was' अनावश्यक (superfluous) है। वाक्य Active Voice में है (The behaviour upset Mr. Gupta)।" },
+    { t: "Rajan abided by (A) / all the rules which (B) / were explained to him (C) / before the programme. (D) / No Error (E)", a: 4, s: "No Error. वाक्य शुद्ध है।" },
+    { t: "We were still talking (A) / about what we should do (B) / when we heard (C) / the children shouting. (D) / No Error (E)", a: 4, s: "No Error. वाक्य शुद्ध है।" },
+    { t: "Being very often ill (A) / and frequently absent, (B) / he had no opportunity to finish his (C) / work or do much of it in fact. (D) / No Error (E)", a: 3, s: "Part (D): 'do' के पहले 'to' लगेगा (to finish... or to do)।" },
+    { t: "Being a rainy day, (A) / Vijay decided to stay (B) / at home and work (C) / further on the problem. (D) / No Error (E)", a: 0, s: "Part (A): 'Being' के पहले 'It' लगेगा (It being a rainy day)। Participle को Subject of Reference चाहिए।" },
+    { t: "School offers many opportunities of meeting (A) / helpful people, reading useful books (B) / and obtain information about (C) / a variety of public careers. (D) / No Error (E)", a: 2, s: "Part (C): 'obtain' के बदले 'obtaining' होगा (meeting... reading... and obtaining)।" },
+    { t: "They did not came out victorious, (A) / yet they were not disappointed (B) / rather satisfied because (C) / they had played well. (D) / No Error (E)", a: 0, s: "Part (A): 'came' के बदले 'come' होगा। Did not + V1।" },
+    { t: "He complained to the police (A) / that his briefcase had been stolen (B) / and that he was lifted (C) / without any money. (D) / No Error (E)", a: 2, s: "Part (C): 'lifted' के बदले 'left' होगा। 'Lift' (उठाना), 'Leave-Left' (छोड़ना)।" },
+    { t: "The P.M. said that his party would (A) / not repeat the mistakes (B) / done by the (C) / previous government. (D) / No Error (E)", a: 2, s: "Part (C): 'done' के बदले 'made' होगा। 'Make a mistake' सही प्रयोग है।" },
+    { t: "I hope the country's condition (A) / may go from bad to worse (B) / unless all necessary steps (C) / are taken to suppress terrorism. (D) / No Error (E)", a: 0, s: "Part (A): 'hope' के बदले 'fear' होगा। बुरी स्थिति के लिए Fear का प्रयोग होता है।" },
+    { t: "Taking tea, (A) / he went to the office (B) / and disposed (C) / of a lot of work. (D) / No Error (E)", a: 0, s: "Part (A): 'Taking tea' गलत है। 'After taking tea' या 'Having taken tea' सही होगा।" },
+    { t: "Only one dispute (A) / has been settled (B) / and others left to both the parties (C) / to settle. (D) / No Error (E)", a: 2, s: "Part (C): 'left' के पहले 'have been' लगेगा (Others have been left)।" },
+    { t: "Without taking proper care, (A) / the doctors could not have been saved (B) / this patient, who received (C) / a bullet injury in the chest. (D) / No Error (E)", a: 1, s: "Part (B): 'been' हटाना पड़ेगा। वाक्य Active Voice में है (Doctors could not have saved)।" },
+    { t: "Going towards them (A) / with some cups of (B) / tea in the tray, somebody knocked (C) / at the door. (D) / No Error (E)", a: 0, s: "Part (A): Subject of reference स्पष्ट नहीं है। 'While I was going...' होना चाहिए।" },
+    { t: "Shall you like (A) / to accompany us (B) / in the picnic which (C) / we are going to arrange today. (D) / No Error (E)", a: 0, s: "Part (A): 'Shall' के बदले 'Will' होगा। Second person Interrogative में Will लगता है।" },
+    { t: "During the course of investigation (A) / the police learnt that not only (B) / the house was looted but (C) / also the things taken away. (D) / No Error (E)", a: 3, s: "Part (D): 'taken' के पहले 'were' लगेगा (The things were taken away)।" },
+    { t: "I know I will be (A) / compelled to leave this house (B) / this week, which will be (C) / very disadvantageous for me. (D) / No Error (E)", a: 0, s: "Part (A): 'will' के बदले 'shall' होगा। Compelled/Obliged के साथ I shall का प्रयोग होता है।" },
+    { t: "Once, we were dwelt (A) / by the seaside (B) / but now we have (C) / settled ourselves in Mumbai. (D) / No Error (E)", a: 0, s: "Part (A): 'were' हटाना होगा। (Active Voice: We dwelt)।" },
+
+    // SET 2 (Q26-51) - Contains Reconstructed Questions based on Explanations
+    { t: "I am really (A) / very sorry to learn (B) / that a reasonable man like you (C) / has lain to me. (D) / No Error (E)", a: 3, s: "Part (D): 'lain' के बदले 'lied' (झूठ बोलना) होगा। Lain 'लेटना' का रूप है।" },
+    { t: "The boy was trembling (A) / with anger when she drowned (B) / all his books (C) / and articles. (D) / No Error (E)", a: 4, s: "No Error. (किताब के अनुसार)।" },
+    { t: "He does nothing (A) / but to find (B) / faults in others and laugh (C) / at them. (D) / No Error (E)", a: 1, s: "Part (B): 'to' का प्रयोग नहीं होगा। Do nothing but के बाद Bare Infinitive आता है।" },
+    { t: "The radio broadcasted (A) / last night that (B) / the temperature in Kashmir (C) / would go below -10°C. (D) / No Error (E)", a: 0, s: "Part (A): 'broadcasted' के बदले 'broadcast' होगा। Broadcast के तीनों रूप समान होते हैं।" },
+    { t: "The workers fell (A) / no fewer than two hundred trees (B) / within six hours and thereby (C) / showed their efficiency. (D) / No Error (E)", a: 0, s: "Part (A): 'fell' के बदले 'felled' (काटकर गिराना) होगा। Fall-Fell (गिरना), Fell-Felled (गिराना)।" },
+    { t: "Most of the rivers in Bihar have overflown (A) / their banks and plunged (B) / a large number of villages. (C) / No Error (D) (E)", a: 0, s: "Part (A): 'overflown' के बदले 'overflowed' होगा। Fly-Flown (उड़ना), Flow-Flowed (बहना)।" },
+    { t: "We advised him (A) / to marry his daughter (B) / because she had (C) / come to marriageable age. (D) / No Error (E)", a: 1, s: "Part (B): 'to marry' के बदले 'to get his daughter married' होगा।" },
+    { t: "The criminal (A) / will certainly be hung (B) / because the charges brought against him (C) / are very serious. (D) / No Error (E)", a: 1, s: "Part (B): 'hung' के बदले 'hanged' (फाँसी) होगा। Hang-Hung (लटकाना), Hang-Hanged (फाँसी)।" },
+    { t: "The students seated (A) / for the examination (B) / in the hall (C) / yesterday. (D) / No Error (E)", a: 0, s: "Part (A): 'seated' के बदले 'took' या 'sat' होगा। Students take an exam." },
+    { t: "The teacher gave (A) / the students (B) / an examination (C) / very strictly. (D) / No Error (E)", a: 0, s: "Part (A): 'gave' के बदले 'held' या context dependent 'took' (teacher gives?). Note: Teacher gives exam, Student takes. Book says error in Give." },
+    { t: "Let him to go (A) / to the market (B) / immediately. (C) / No Error (D) (E)", a: 0, s: "Part (A): 'to' का प्रयोग नहीं होगा। Let के बाद Bare Infinitive आता है।" },
+    { t: "He is making (A) / a seminar (B) / on this topic (C) / very soon. (D) / No Error (E)", a: 0, s: "Part (A): 'making' के बदले 'organizing' या 'joining' होगा।" },
+    { t: "He might has (A) / done this work (B) / without any difficulty. (C) / No Error (D) (E)", a: 0, s: "Part (A): 'has' के बदले 'have' होगा। Modal (might) के बाद V1 (have) आता है।" },
+    { t: "I heard him (A) / to sing a song (B) / in the hall. (C) / No Error (D) (E)", a: 1, s: "Part (B): 'to' का प्रयोग नहीं होगा। Hear + Obj + Bare Infinitive।" },
+    { t: "Having had read (A) / the book, he (B) / returned it to the library. (C) / No Error (D) (E)", a: 0, s: "Part (A): 'had' superfluous है। Having + V3 (Having read) सही है।" },
+    { t: "He has got (A) / ill recently (B) / and cannot come. (C) / No Error (D) (E)", a: 0, s: "Part (A): 'got' के बदले 'gotten' (Adjective use) या 'become' होगा।" },
+    { t: "Walking in the field, (A) / a snake bit him (B) / and he died. (C) / No Error (D) (E)", a: 0, s: "Part (A): 'Walking' का Subject 'snake' बन रहा है। सही: 'While he was walking...'" },
+    { t: "It is better to stay at home (A) / than to walk in the street (B) / when there erupts (C) / a communal riot in the town. (D) / No Error (E)", a: 1, s: "Part (B): 'than' के बाद 'to' का प्रयोग नहीं होगा। Comparison में Than के बाद Bare Infinitive आता है।" },
+    { t: "He works hard (A) / that he should please (B) / his Manager to promote him (C) / to the post of Sales Executive. (D) / No Error (E)", a: 1, s: "Part (B): 'should' के बदले 'may' का प्रयोग होगा। Purpose बताने के लिए May लगता है।" },
+    { t: "They have fail (A) / to do (B) / their duty. (C) / No Error (D) (E)", a: 0, s: "Part (A): 'fail' के बदले 'failed' होगा। Have + V3।" },
+    { t: "I noticed (A) / him lay (B) / in the bed. (C) / No Error (D) (E)", a: 0, s: "Part (A): 'noticed' के बदले 'found' बेहतर है (contextual)।" },
+    { t: "I suggest that (A) / he will go (B) / to the doctor. (C) / No Error (D) (E)", a: 1, s: "Part (B): 'will' के बदले 'should' होगा। Suggestion के बाद Should आता है।" },
+    { t: "Judge the case, (A) / the decision (B) / was given. (C) / No Error (D) (E)", a: 0, s: "Part (A): 'Judge' के बदले 'Judging' होगा (Participle)।" },
+    { t: "Running and (A) / move is (B) / good exercise. (C) / No Error (D) (E)", a: 1, s: "Part (B): 'move' के बदले 'moving' होगा (Parallelism)।" },
+    { t: "He has done (A) / his work (B) / honestly. (C) / No Error (D) (E)", a: 4, s: "No Error." },
+    { t: "They are (A) / going to (B) / the market. (C) / No Error (D) (E)", a: 4, s: "No Error." }
+];
+
+let curQ = 0, qList = [], uAns = {}, sub = false, tmr;
+
+function start(set) {
+    document.getElementById('start').style.display = 'none';
+    let s = set==1 ? 0 : 25;
+    let e = set==1 ? 25 : db.length;
+    qList = db.slice(s, e);
+    
+    let h = '';
+    qList.forEach((_, i) => h += `<div class="pal-btn" id="p${i}" onclick="jump(${i})">${i+1}</div>`);
+    document.getElementById('pal').innerHTML = h;
+
+    load(0);
+    
+    let t = 900;
+    tmr = setInterval(() => {
+        t--;
+        let m = Math.floor(t/60).toString().padStart(2,'0');
+        let s = (t%60).toString().padStart(2,'0');
+        document.getElementById('time').innerText = m+':'+s;
+        if(t<=0) submit();
+    }, 1000);
+}
+
+function load(i) {
+    curQ = i;
+    let d = qList[i];
+    
+    let txt = d.t.replace(/\(([A-E])\)/g, '<span class="marker">($1)</span>');
+    document.getElementById('q-txt').innerHTML = txt;
+    document.getElementById('q-idx').innerText = 'Q' + (i+1);
+
+    let hasE = d.t.includes("(E)");
+    let opts = ["(A)", "(B)", "(C)", "(D)"];
+    if(hasE) opts.push("No Error (E)");
+    else opts[3] = "No Error (D)"; 
+
+    let h = '';
+    opts.forEach((l, idx) => {
+        let sel = uAns[i] === idx ? 'selected' : '';
+        let style = '';
+        if(sub) {
+            if(idx === d.a) style = 'border-color:#0acf83; background:#e5fbf2;';
+            else if(sel && idx !== d.a) style = 'border-color:#f25050; background:#fef1f1;';
+        }
+        h += `<div class="opt ${sel}" style="${style}" onclick="pick(${idx})">
+            <div class="circle"></div><span>${l}</span>
+        </div>`;
+    });
+    document.getElementById('opts').innerHTML = h;
+
+    document.querySelectorAll('.pal-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('p'+i).classList.add('active');
+
+    if(sub) {
+        document.getElementById('sol').style.display = 'block';
+        document.getElementById('sol-txt').innerText = d.s;
+    } else {
+        document.getElementById('sol').style.display = 'none';
+    }
+}
+
+function pick(o) {
+    if(sub) return;
+    uAns[curQ] = o;
+    document.getElementById('p'+curQ).classList.add('done');
+    load(curQ);
+}
+
+function nav(d) {
+    let n = curQ + d;
+    if(n >= 0 && n < qList.length) load(n);
+}
+
+function jump(i) { load(i); }
+
+function submit() {
+    clearInterval(tmr);
+    sub = true;
+    document.querySelector('.submit').style.display = 'none';
+    let sc = 0;
+    qList.forEach((q, i) => {
+        if(uAns[i] === q.a) sc += 1;
+        else if(uAns[i] !== undefined) sc -= 0.25;
+    });
+    alert('Score: ' + sc);
+    load(curQ);
+}
+</script>
+</body>
+</html>

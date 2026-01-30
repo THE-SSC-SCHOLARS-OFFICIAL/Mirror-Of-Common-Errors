@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SSC Noun Numbers Mock - THE SSC SCHOLARS</title>
+<style>
+    :root { 
+        --header-h: 60px;
+        --sidebar-w: 280px;
+        --blue: #007bff;
+        --green: #0acf83; 
+        --red: #f25050;
+        --gray-bg: #f2f3f5;
+        --border: #e0e0e0;
+    }
+    
+    * { box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; background: var(--gray-bg); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* HEADER */
+    header { height: var(--header-h); background: #fff; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    
+    .logo { font-weight: 800; font-size: 1.1rem; color: #1a202c; letter-spacing: 0.5px; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+    .logo::before { content: '🎓'; font-size: 1.4rem; }
+    
+    .timer-box { background: #eef2f8; color: #333; padding: 6px 12px; border-radius: 4px; font-weight: 600; display: flex; align-items: center; gap: 5px; border: 1px solid #d1d9e6; }
+    .submit-btn { background: var(--green); color: white; border: none; padding: 8px 24px; border-radius: 4px; font-weight: 700; cursor: pointer; letter-spacing: 0.5px; transition: background 0.2s; }
+    .submit-btn:hover { background: #08b974; }
+
+    /* LAYOUT */
+    .container { display: flex; flex: 1; height: calc(100vh - var(--header-h)); }
+    
+    /* LEFT: QUESTION PANEL */
+    .q-panel { flex: 1; background: #fff; margin: 15px; border-radius: 8px; display: flex; flex-direction: column; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden; }
+    
+    .q-top-bar { padding: 15px 25px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #fff; }
+    .q-num { font-weight: 700; color: #333; font-size: 1.1rem; }
+    .marks { font-size: 0.9rem; color: #666; background: #f8f9fa; padding: 4px 8px; border-radius: 4px; border: 1px solid #eee; }
+    .marks .pos { color: var(--green); font-weight: bold; }
+    .marks .neg { color: var(--red); }
+
+    .q-body { flex: 1; padding: 25px; overflow-y: auto; }
+    
+    .question-text { font-size: 1.2rem; line-height: 1.7; color: #2d3748; margin-bottom: 30px; font-weight: 500; }
+    .highlight-part { color: var(--blue); font-weight: bold; padding: 0 4px; background: #ebf8ff; border-radius: 3px; }
+
+    /* OPTIONS */
+    .options-list { display: flex; flex-direction: column; gap: 12px; }
+    .option-item { 
+        display: flex; align-items: center; 
+        padding: 14px 18px; 
+        border: 2px solid #e2e8f0; 
+        border-radius: 8px; 
+        cursor: pointer; 
+        transition: all 0.2s;
+        background: #fff;
+    }
+    .option-item:hover { background: #f7fafc; border-color: #cbd5e0; }
+    .option-item.selected { border-color: var(--blue); background: #ebf8ff; }
+    
+    .radio-circle { 
+        width: 20px; height: 20px; border: 2px solid #a0aec0; border-radius: 50%; margin-right: 15px; 
+        position: relative; display: flex; align-items: center; justify-content: center; transition: 0.2s;
+    }
+    .option-item.selected .radio-circle { border-color: var(--blue); }
+    .option-item.selected .radio-circle::after { content: ''; width: 10px; height: 10px; background: var(--blue); border-radius: 50%; }
+
+    .opt-label { font-size: 1.05rem; color: #4a5568; font-weight: 500; }
+
+    /* EXPLANATION BOX */
+    .solution-box { margin-top: 30px; border: 1px solid #bee3f8; background: #ebf8ff; border-radius: 8px; overflow: hidden; display: none; animation: slideUp 0.3s ease-out; }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    
+    .sol-header { background: #bee3f8; padding: 12px 20px; font-weight: bold; color: #2b6cb0; font-size: 0.95rem; border-bottom: 1px solid #90cdf4; }
+    .sol-body { padding: 20px; color: #2d3748; line-height: 1.6; font-size: 1rem; }
+
+    /* FOOTER */
+    .q-footer { padding: 15px 25px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; background: #fff; }
+    .btn { padding: 10px 24px; border: 1px solid #cbd5e0; background: #fff; border-radius: 6px; cursor: pointer; font-weight: 600; color: #4a5568; transition: 0.2s; }
+    .btn:hover { background: #f7fafc; border-color: #a0aec0; }
+    .btn-save { background: var(--blue); color: white; border: 1px solid var(--blue); }
+    .btn-save:hover { background: #0062cc; border-color: #0062cc; }
+
+    /* RIGHT SIDEBAR */
+    .sidebar { width: var(--sidebar-w); background: #fff; border-left: 1px solid var(--border); display: flex; flex-direction: column; }
+    .user-profile { padding: 20px; border-bottom: 1px solid var(--border); background: #f8f9fa; display: flex; align-items: center; gap: 12px; }
+    .avatar { width: 40px; height: 40px; background: #cbd5e0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; font-size: 1.2rem; }
+    
+    .palette-info { padding: 10px 20px; background: #fff; font-size: 0.85rem; color: #718096; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
+    .palette-area { flex: 1; padding: 20px; overflow-y: auto; }
+    .palette-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    .p-btn { 
+        height: 38px; border-radius: 6px; border: 1px solid #e2e8f0; background: #fff; 
+        cursor: pointer; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; 
+        transition: 0.2s; font-weight: 500; color: #4a5568;
+    }
+    .p-btn:hover { background: #edf2f7; }
+    .p-btn.active { border: 2px solid var(--blue); color: var(--blue); font-weight: bold; transform: scale(1.05); }
+    .p-btn.answered { background: var(--green); color: white; border-color: var(--green); }
+    .p-btn.not-answered { background: var(--red); color: white; border-color: var(--red); }
+
+    /* START SCREEN */
+    #start-screen { position: fixed; inset: 0; background: rgba(255,255,255,0.98); z-index: 100; display: flex; align-items: center; justify-content: center; }
+    .start-card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); width: 450px; text-align: center; border: 1px solid #e2e8f0; }
+    .set-btn { display: block; width: 100%; padding: 16px; margin: 12px 0; background: #fff; border: 2px solid #e2e8f0; color: #4a5568; font-weight: 700; border-radius: 8px; cursor: pointer; transition: 0.2s; font-size: 1.1rem; text-align: left; padding-left: 20px; position: relative; }
+    .set-btn::after { content: '→'; position: absolute; right: 20px; opacity: 0.5; }
+    .set-btn:hover { border-color: var(--blue); color: var(--blue); background: #ebf8ff; }
+
+    @media (max-width: 768px) {
+        .sidebar { display: none; }
+        .q-panel { margin: 0; border-radius: 0; }
+        .container { flex-direction: column; }
+        .logo { font-size: 0.8rem; } 
+        .q-body { padding: 15px; }
+    }
+</style>
+</head>
+<body>
+
+<div id="start-screen">
+    <div class="start-card">
+        <h1 style="margin-top:0; color:#2d3748; font-size: 1.8rem;">Nouns & Numbers</h1>
+        <p style="color:#718096; margin-bottom:30px;">Mirror of Common English • Chapter 3</p>
+        <button class="set-btn" onclick="startTest(1)">🚀 Start Set 1 (Q1 - Q25)</button>
+        <button class="set-btn" onclick="startTest(2)">🎯 Start Set 2 (Q26 - Q50)</button>
+    </div>
+</div>
+
+<header>
+    <div class="logo">Powered by THE SSC SCHOLARS OFFICIAL</div>
+    <div class="timer-box">
+        <span>⏱</span> <span id="timer">15:00</span>
+    </div>
+    <button class="submit-btn" onclick="submitTest()">SUBMIT TEST</button>
+</header>
+
+<div class="container">
+    <div class="q-panel">
+        <div class="q-top-bar">
+            <div class="q-num" id="q-num-disp">Question 1</div>
+            <div class="marks"><span class="pos">+1.0</span> / <span class="neg">-0.25</span></div>
+        </div>
+        
+        <div class="q-body">
+            <div class="question-text" id="q-text">Loading...</div>
+            
+            <div class="options-list" id="options-container"></div>
+
+            <div class="solution-box" id="solution-box">
+                <div class="sol-header">💡 Solution & Explanation</div>
+                <div class="sol-body" id="sol-text"></div>
+            </div>
+        </div>
+
+        <div class="q-footer">
+            <button class="btn" onclick="changeQ(-1)">Previous</button>
+            <button class="btn btn-save" onclick="saveNext()">Save & Next</button>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="user-profile">
+            <div class="avatar">S</div>
+            <div>
+                <div style="font-size:0.95rem; font-weight:700; color:#2d3748;">SSC Aspirant</div>
+                <div style="font-size:0.8rem; color:#718096;">Nouns & Numbers</div>
+            </div>
+        </div>
+        <div class="palette-info">
+            <span>Question Palette</span>
+        </div>
+        <div class="palette-area">
+            <div class="palette-grid" id="palette-grid"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// --- FULL DETAILED DATA FOR NOUNS & NUMBERS ---
+const allQuestions = [
+    // SET 1 (Q1-25)
+    { q: "One of her firmest belief (A) / was that her friend shouted at (B) / her with a view to making her (C) / aware of her repeated lapses. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'belief' के बदले 'beliefs' का प्रयोग होगा क्योंकि 'One of' के बाद Noun हमेशा Plural Number में होता है (जैसे- One of the books)।" },
+    { q: "In one of our first conversation (A) / she informed me (B) / that she had lost her husband (C) / in a bus accident. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'conversation' के बदले 'conversations' का प्रयोग होगा क्योंकि 'One of' के बाद Plural Noun आता है।" },
+    { q: "All the girls students (A) / of the college are advised (B) / to sit in the (C) / Girls' Common Room. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'girls students' के बदले 'girl students' होगा। Compound Nouns में सिर्फ मुख्य शब्द का Plural बनाया जाता है। यहाँ 'student' मुख्य शब्द है।" },
+    { q: "The majority of the woman teachers (A) / are persuading (B) / the principal to consider (C) / their demands. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'woman' के बदले 'women' होगा। 'man' या 'woman' से बने Compound Nouns में दोनों भागों का Plural बनाया जाता है (जैसे- women teachers)।" },
+    { q: "It is harmful (A) / to take cupsful (B) / of tea (C) / five times a day. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'cupsful' के बदले 'cupfuls' होगा। ऐसे Nouns जिनका अंत 'ful' से हो, उनके अंत में 's' जोड़कर Plural बनाया जाता है (जैसे- handfuls, spoonfuls)।" },
+    { q: "In the last elections (A) / the electorates' disinterestedness (B) / puzzled the politicians (C) / very much. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'electorates'' के बदले 'electorate's' होगा। 'Electorate' (मतदातागण) अपने आप में Plural है, इसलिए इसमें 's' लगाकर Plural नहीं बनाया जाता, सिर्फ apostrophe 's' लगेगा।" },
+    { q: "The present datas (A) / show that the illiteracy rate (B) / in India has fallen down but not (C) / to the level of expectation. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'datas' के बदले 'data' का प्रयोग होगा। 'Data' का प्रयोग Singular और Plural दोनों रूपों में होता है, 'datas' गलत शब्द है।" },
+    { q: "He said that (A) / he always kept in his pocket (B) / a bundle of one hundred (C) / rupees notes. (D) / No Error (E)", ans: 3, sol: "Part (D) में 'rupees' के बदले 'rupee' होगा। 'One hundred rupee' यहाँ Adjective का काम कर रहा है, और Adjective का Plural नहीं होता (जैसे- A five-rupee note)।" },
+    { q: "Running a five stars (A) / hotel needs much more (B) / money than what we have in (C) / our account. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'five stars' के बदले 'five-star' होगा। Hyphenated expressions में Noun Singular रहता है।" },
+    { q: "He gave me (A) / two important informations (B) / I had been waiting for (C) / for the previous two months. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'informations' के बदले 'pieces of information' होगा। Information एक Uncountable Noun है, इसका Plural 's' लगाकर नहीं बनता।" },
+    { q: "Your advices are (A) / the proof of your (B) / discriminating mind and (C) / pragmatic approach. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'advices' के बदले 'advice' होगा। 'Advice' (सलाह) Uncountable है। 'Advices' का अर्थ 'सूचनाएं' होता है जो यहाँ उपयुक्त नहीं है।" },
+    { q: "An earthquake (A) / is a natural phenomenon (B) / and nobody can (C) / check it, be sure. (D) / No Error (E)", ans: 4, sol: "No Error. 'Phenomenon' Singular है और 'Phenomena' Plural होता है। यहाँ Singular सही है।" },
+    { q: "The class teacher (A) / gave him a home work (B) / and instructed him to do it (C) / at night. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'a home work' के बदले 'homework' होगा। Work (कार्य) Uncountable Noun है, इसके पहले 'a' नहीं लगता।" },
+    { q: "I saw only (A) / five police who were running after (B) / the bank-robbers. (C) / No Error (D) (E)", ans: 1, sol: "Part (B) में 'five police' के बदले 'five policemen' होगा। 'Police' पूरे विभाग को दर्शाता है, गिनती के लिए 'policemen' का प्रयोग होता है।" },
+    { q: "The sheafs (A) / of the wheat-plants were too heavy (B) / for me to (C) / carry on the head. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'sheafs' के बदले 'sheaves' होगा। जिन Nouns के अंत में f/fe हो, उनका Plural 'ves' लगाकर बनता है (जैसे- leaf-leaves)।" },
+    { q: "All the Chiefs Ministers (A) / are responsible for the (B) / pitiable condition of their (C) / states. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'Chiefs Ministers' के बदले 'Chief Ministers' होगा। Compound Noun में मुख्य शब्द (Minister) का Plural बनाया जाता है।" },
+    { q: "After he had delivered (A) / the speech, he said that he (B) / hoped to be conspicuously understood (C) / and forgiven for any lapses. (D) / No Error (E)", ans: 4, sol: "No Error. वाक्य शुद्ध है।" },
+    { q: "He says that (A) / a two-miles walk (B) / always keeps him (C) / healthy and fresh. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'a two-miles walk' के बदले 'a two-mile walk' होगा। हाइफनेटेड एडजेक्टिव (two-mile) हमेशा Singular रहता है।" },
+    { q: "The haves should (A) / not look scornfully (B) / at the haves not, rather they should (C) / try to encourage them to work hard. (D) / No Error (E)", ans: 2, sol: "Part (C) में 'haves not' के बदले 'have-nots' होगा। 'Have-nots' का अर्थ है 'गरीब लोग'।" },
+    { q: "Language consists of several stratums, (A) / said a linguist (B) / in his lecture on Language (C) / and Linguistics. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'stratums' के बदले 'strata' होगा। Stratum का Plural Strata होता है (Latin word)।" },
+    { q: "All his sister-in-laws (A) / are extremely beautiful (B) / to look at so the question (C) / of selection is very puzzling. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'sister-in-laws' के बदले 'sisters-in-law' होगा। मुख्य शब्द (sister) का Plural बनाया जाता है।" },
+    { q: "The bretherns (A) / of this locality are always (B) / at daggers-drawn without any (C) / apparent reason. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'bretherns' के बदले 'brethren' होगा। 'Brethren' (भाई-बंधु) अपने आप में Plural है, इसमें 's' नहीं लगता।" },
+    { q: "The wall of this magnificent (A) / building is (B) / fifty foot high and its paintings (C) / are very striking. (D) / No Error (E)", ans: 2, sol: "Part (C) में 'fifty foot' के बदले 'fifty feet' होगा। एक से अधिक होने पर Foot का Plural Feet होता है।" },
+    { q: "The headquarter (A) / of the Army is in Delhi, (B) / it's really very surprising that you do not know (C) / even this fact. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'headquarter' के बदले 'headquarters' होगा। मुख्यालय के लिए हमेशा 'Headquarters' (Singular/Plural same form) का प्रयोग होता है।" },
+    { q: "If a student needs (A) / advice about careers, (B) / he should consult (C) / the careers officer. (D) / No Error (E)", ans: 4, sol: "No Error. वाक्य शुद्ध है।" },
+
+    // SET 2 (Q26-50)
+    { q: "Two summons (A) / have been issued by the court (B) / but you have not (C) / turned up yet. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'Two summons' के बदले 'Two summonses' होगा। Summons एक Singular Noun है, इसका Plural Summonses होता है।" },
+    { q: "He has bought a dozen of copies (A) / of British English Grammar, (B) / which is a very popular book (C) / among the students. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'a dozen of copies' के बदले 'a dozen copies' होगा। Dozen, Hundred आदि के बाद 'of' का प्रयोग नहीं होता जब उनके पहले संख्या या आर्टिकल हो।" },
+    { q: "The beautiful surrounding (A) / of the palace attracted a large (B) / number of tourists (C) / coming from abroad. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'surrounding' के बदले 'surroundings' होगा। Noun के रूप में 'surroundings' (परिवेश) का प्रयोग होता है।" },
+    { q: "The sceneries (A) / of Kashmir is more beautiful (B) / than that of (C) / Darjeeling. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'sceneries' के बदले 'scenery' होगा। Scenery एक Uncountable Noun है, इसका Plural नहीं होता।" },
+    { q: "His means (A) / are very limited (B) / yet he does not curtail (C) / his expenditure and spends lavishly. (D) / No Error (E)", ans: 4, sol: "No Error. 'Means' (आय के स्रोत) Plural माना जाता है, इसलिए 'are' सही है।" },
+    { q: "He uses a fine (A) / quality of shampoo (B) / so his hairs are (C) / black and attractive. (D) / No Error (E)", ans: 2, sol: "Part (C) में 'hairs are' के बदले 'hair is' होगा। सिर के बालों के लिए 'Hair' (Collective/Uncountable) का प्रयोग होता है।" },
+    { q: "Wordsworth's poetries (A) / is characterised by his subtle description (B) / of the beauty and liveliness (C) / of Nature. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'poetries' के बदले 'poetry' या 'poems' होगा। Poetry Uncountable है।" },
+    { q: "The doctor declared that (A) / the patient's intestine was (B) / not working properly and so he needed (C) / medical treatment for a long time. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'intestine' के बदले 'intestines' होगा। आंतों के लिए सामान्यतः Plural 'intestines' का प्रयोग होता है।" },
+    { q: "He has ordered (A) / bricks for the proposed (B) / hotel and bar. (C) / No Error (D) (E)", ans: 1, sol: "Part (B) में 'bricks' के बदले 'pieces of brick' या 'brick' होगा। भवन निर्माण सामग्री के रूप में Brick Uncountable होता है।" },
+    { q: "When you see his (A) / offsprings, you can't (B) / believe that he is (C) / above seventy. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'offsprings' के बदले 'offspring' होगा। Offspring (संतान) Singular और Plural दोनों में एक समान रहता है।" },
+    { q: "Please convey my best (A) / regard and wishes to the Boss, (B) / the secretary said to the peon (C) / of the Manager. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'regard' के बदले 'regards' होगा। शुभकामनाओं के लिए 'regards' का प्रयोग होता है।" },
+    { q: "The pretty woman (A) / sitting in the car is (B) / the daughter of the one of the headman (C) / of the village. (D) / No Error (E)", ans: 3, sol: "Part (D) में 'headman' के बदले 'headmen' का प्रयोग होना चाहिए क्योंकि 'one of' के बाद Noun Plural होता है (one of the headmen)।" },
+    { q: "When he returned (A) / from America, he informed me (B) / that he had come here (C) / to do an urgent work. (D) / No Error (E)", ans: 3, sol: "Part (D) में 'an urgent work' के बदले 'a piece of urgent work' या 'some urgent work' होगा। Work Uncountable है।" },
+    { q: "Many of the MPs absented (A) / themselves from Parliament (B) / when some issues of the highest national importance (C) / were to be discussed. (D) / No Error (E)", ans: 4, sol: "No Error. वाक्य शुद्ध है।" },
+    { q: "The issues are very complex and the problem (A) / is that they are bound to be obscured (B) / by these hypocritical politicians. (C) / No Error (D) (E)", ans: 4, sol: "No Error. वाक्य शुद्ध है।" },
+    { q: "These type of books (A) / are certainly helpful to the students (B) / preparing for the Banking Service (C) / Examinations. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'type' के बदले 'types' होगा। 'These' Plural है, इसलिए इसके बाद Plural Noun (types) आएगा।" },
+    { q: "There are only (A) / certain boy that are sincere (B) / and diligent and that can do well in the examinations (C) / said the class teacher. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'boy' के बदले 'boys' होगा। 'Certain' के बाद Plural Noun आता है, जबकि 'A certain' के बाद Singular।" },
+    { q: "I have never seen (A) / such a lovely spectacles (B) / in my life, said (C) / the passer-by. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'spectacles' के बदले 'spectacle' होगा। दृश्य के अर्थ में 'Spectacle' Singular होता है।" },
+    { q: "I do my best (A) / but I don't understand why (B) / I do not get expected (C) / marks in the examination. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'why' के पहले कारण स्पष्ट नहीं है, लेकिन वास्तव में गलती Part (D) में हो सकती थी अगर 'mark' होता। यहाँ 'marks' सही है। वास्तव में 'expected marks' सही है। दिए गए उत्तर कुंजी के अनुसार (B) में त्रुटि मानी गयी है, शायद 'why' के प्रयोग में।" },
+    { q: "You are among those (A) / luckiest man who attained name (B) / and fame not by (C) / labour but by chance. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'man' के बदले 'men' होगा। 'Those' के बाद Plural Noun आता है।" },
+    { q: "Not to speak of failure (A) / even a tragedy does not affect (B) / his high spirits. (C) / No Error (D) (E)", ans: 2, sol: "Part (C) में 'spirits' सही है (mood/hosla)। उत्तर कुंजी (C) बताती है, संभवतः 'spirit' (आत्मा) और 'spirits' (उत्साह) के संदर्भ में। यहाँ 'high spirits' सही मुहावरा है। शायद book में कुछ और logic हो, लेकिन मानक अंग्रेजी में 'high spirits' सही है।" },
+    { q: "Owing to his heavy engagement, (A) / he could not write even the two-third (B) / of the book of which the publication was (C) / expected before January. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'two-third' के बदले 'two-thirds' होगा। भिन्नों (Fractions) में यदि अंश 1 से बड़ा हो, तो हर (denominator) Plural होता है।" },
+    { q: "I know nothing (A) / about his whereabout. (B) / Do you? he said to me. (C) / No Error (D) (E)", ans: 1, sol: "Part (B) में 'whereabout' के बदले 'whereabouts' होगा। अता-पता के लिए 'Whereabouts' का प्रयोग होता है।" },
+    { q: "Now I have come (A) / to know why he always (B) / remains at loggers-head with his wife (C) / and mother-in-law. (D) / No Error (E)", ans: 2, sol: "Part (C) में 'loggers-head' के बदले 'loggerheads' होगा। मुहावरा 'at loggerheads' (झगड़े में) होता है।" },
+    { q: "You will not (A) / be allowed (B) / to go anywhere else (C) / to play outdoor games. (D) / No Error (E)", ans: 4, sol: "No Error. वाक्य शुद्ध है।" }
+];
+
+// --- ENGINE ---
+let setQuestions = [];
+let currentIdx = 0;
+let userAnswers = {};
+let isSubmitted = false;
+let timerRef;
+const optionLabels = ["(A)", "(B)", "(C)", "(D)", "No Error (E)"];
+
+function startTest(setNum) {
+    let start = 0;
+    let end = 25;
+    if(setNum === 2) {
+        start = 25;
+        end = allQuestions.length;
+    }
+    setQuestions = allQuestions.slice(start, end);
+    
+    document.getElementById('start-screen').style.display = 'none';
+    
+    // Init Palette
+    const pGrid = document.getElementById('palette-grid');
+    pGrid.innerHTML = setQuestions.map((_, i) => 
+        `<div class="p-btn" id="pal-${i}" onclick="jumpTo(${i})">${i+1}</div>`
+    ).join('');
+
+    loadQuestion(0);
+    startTimer();
+}
+
+function startTimer() {
+    let timeLeft = 900; // 15 mins
+    timerRef = setInterval(() => {
+        timeLeft--;
+        let m = Math.floor(timeLeft/60).toString().padStart(2,'0');
+        let s = (timeLeft%60).toString().padStart(2,'0');
+        document.getElementById('timer').innerText = `${m}:${s}`;
+        if(timeLeft <= 0) submitTest();
+    }, 1000);
+}
+
+function loadQuestion(idx) {
+    currentIdx = idx;
+    const qData = setQuestions[idx];
+    
+    // Update Question Text
+    let formattedText = qData.q.replace(/\((A|B|C|D|E)\)/g, '<span class="highlight-part">($1)</span>');
+    document.getElementById('q-text').innerHTML = formattedText;
+    document.getElementById('q-num-disp').innerText = `Question ${idx+1}`;
+
+    // Generate Vertical Options
+    const optContainer = document.getElementById('options-container');
+    optContainer.innerHTML = optionLabels.map((label, i) => {
+        const isSelected = userAnswers[idx] === i;
+        return `
+        <div class="option-item ${isSelected ? 'selected' : ''}" onclick="selectOption(${i})">
+            <div class="radio-circle"></div>
+            <span class="opt-label">${label}</span>
+        </div>`;
+    }).join('');
+
+    // Palette Update
+    document.querySelectorAll('.p-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(`pal-${idx}`).classList.add('active');
+
+    // Show Solution if Submitted
+    const solBox = document.getElementById('solution-box');
+    if(isSubmitted) {
+        solBox.style.display = 'block';
+        
+        // Highlight correct/wrong in options
+        const opts = document.querySelectorAll('.option-item');
+        opts[qData.ans].style.border = "2px solid #0acf83";
+        opts[qData.ans].style.background = "#e5fbf2";
+        
+        if(userAnswers[idx] !== undefined && userAnswers[idx] !== qData.ans) {
+            opts[userAnswers[idx]].style.border = "2px solid #f25050";
+            opts[userAnswers[idx]].style.background = "#fef1f1";
+        }
+
+        document.getElementById('sol-text').innerText = qData.sol;
+    } else {
+        solBox.style.display = 'none';
+    }
+}
+
+function selectOption(optIndex) {
+    if(isSubmitted) return;
+    userAnswers[currentIdx] = optIndex;
+    
+    const opts = document.querySelectorAll('.option-item');
+    opts.forEach(o => o.classList.remove('selected'));
+    opts[optIndex].classList.add('selected');
+    
+    document.getElementById(`pal-${currentIdx}`).classList.add('answered');
+}
+
+function saveNext() {
+    if(currentIdx < setQuestions.length - 1) loadQuestion(currentIdx + 1);
+}
+
+function changeQ(dir) {
+    if(currentIdx + dir >= 0 && currentIdx + dir < setQuestions.length) {
+        loadQuestion(currentIdx + dir);
+    }
+}
+
+function jumpTo(idx) {
+    loadQuestion(idx);
+}
+
+function submitTest() {
+    clearInterval(timerRef);
+    isSubmitted = true;
+    document.querySelector('.submit-btn').style.display = 'none';
+    
+    let score = 0;
+    setQuestions.forEach((q, i) => {
+        if(userAnswers[i] === q.ans) score += 1;
+        else if(userAnswers[i] !== undefined) score -= 0.25;
+    });
+    
+    alert(`Test Finished!\nScore: ${score} / ${setQuestions.length}`);
+    loadQuestion(currentIdx); 
+}
+</script>
+</body>
+</html>

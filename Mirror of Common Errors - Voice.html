@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voice Mock Test - THE SSC SCHOLARS</title>
+<style>
+    :root { --blue: #007bff; --green: #0acf83; --red: #f25050; --bg: #f2f3f5; }
+    * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body { margin: 0; background: var(--bg); height: 100vh; display: flex; flex-direction: column; }
+
+    header { background: #fff; padding: 0 20px; height: 60px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
+    .logo { font-weight: 800; color: #333; }
+    .timer { background: #eef2f8; padding: 5px 10px; border-radius: 4px; font-weight: bold; }
+    .submit { background: var(--green); color: white; border: none; padding: 8px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+
+    .container { display: flex; flex: 1; overflow: hidden; }
+    .q-panel { flex: 1; background: #fff; margin: 15px; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    
+    .q-header { padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; font-weight: bold; }
+    .q-body { flex: 1; padding: 20px; overflow-y: auto; }
+    .q-text { font-size: 1.15rem; margin-bottom: 20px; line-height: 1.6; color: #2d3748; }
+    .marker { color: var(--blue); font-weight: bold; background: #ebf8ff; padding: 2px 5px; border-radius: 4px; font-size: 0.9em; margin: 0 2px; }
+
+    .opts { display: flex; flex-direction: column; gap: 10px; }
+    .opt { display: flex; align-items: center; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+    .opt:hover { background: #f7fafc; border-color: #cbd5e0; }
+    .opt.selected { border-color: var(--blue); background: #ebf8ff; }
+    .circle { width: 18px; height: 18px; border: 2px solid #a0aec0; border-radius: 50%; margin-right: 15px; position: relative; }
+    .opt.selected .circle { border-color: var(--blue); }
+    .opt.selected .circle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 8px; height: 8px; background: var(--blue); border-radius: 50%; }
+
+    .sol-box { margin-top: 20px; background: #ebf8ff; border: 1px solid #bee3f8; border-radius: 6px; padding: 15px; display: none; }
+    .sol-title { font-weight: bold; color: #2b6cb0; margin-bottom: 5px; }
+
+    .footer { padding: 15px; border-top: 1px solid #eee; display: flex; justify-content: space-between; }
+    .btn { padding: 8px 20px; border: 1px solid #ccc; background: white; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    .btn-save { background: var(--blue); color: white; border: none; }
+
+    .sidebar { width: 280px; background: white; border-left: 1px solid #ddd; display: flex; flex-direction: column; }
+    .pal-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; overflow-y: auto; }
+    .pal-btn { height: 35px; border: 1px solid #ddd; background: white; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #555; }
+    .pal-btn.active { border-color: var(--blue); color: var(--blue); border-width: 2px; }
+    .pal-btn.done { background: var(--green); color: white; border-color: var(--green); }
+
+    #start { position: fixed; inset: 0; background: rgba(255,255,255,0.98); z-index: 100; display: flex; align-items: center; justify-content: center; }
+    .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 400px; text-align: center; border: 1px solid #ddd; }
+    .start-btn { width: 100%; padding: 15px; margin: 10px 0; background: white; border: 2px solid var(--blue); color: var(--blue); font-weight: bold; border-radius: 8px; cursor: pointer; text-align: left; }
+    .start-btn:hover { background: var(--blue); color: white; }
+
+    @media(max-width:768px) { .sidebar{display:none;} .container{flex-direction:column;} }
+</style>
+</head>
+<body>
+
+<div id="start">
+    <div class="card">
+        <h2>Chapter 11: Voice</h2>
+        <p>Mirror of Common English</p>
+        <button class="start-btn" onclick="start(1)">Start Test</button>
+    </div>
+</div>
+
+<header>
+    <div class="logo">THE SSC SCHOLARS OFFICIAL</div>
+    <div class="timer" id="time">15:00</div>
+    <button class="submit" onclick="submit()">SUBMIT</button>
+</header>
+
+<div class="container">
+    <div class="q-panel">
+        <div class="q-header">
+            <span id="q-idx">Q1</span>
+            <span>+1.0 / -0.25</span>
+        </div>
+        <div class="q-body">
+            <div class="q-text" id="q-txt"></div>
+            <div class="opts" id="opts"></div>
+            <div class="sol-box" id="sol">
+                <div class="sol-title">Solution</div>
+                <div id="sol-txt"></div>
+            </div>
+        </div>
+        <div class="footer">
+            <button class="btn" onclick="nav(-1)">Prev</button>
+            <button class="btn btn-save" onclick="nav(1)">Save & Next</button>
+        </div>
+    </div>
+    <div class="sidebar">
+        <div style="padding:15px;border-bottom:1px solid #eee;font-weight:bold">Questions</div>
+        <div class="pal-grid" id="pal"></div>
+    </div>
+</div>
+
+<script>
+const db = [
+    { t: "Any step that the centre (A) / takes to establish (B) / peace and harmony in the country (C) / will be appreciate. (D) / No Error (E)", a: 3, s: "Part (D): 'will be appreciate' के बदले 'will be appreciated' होगा। Passive Voice में Will be + V3 का प्रयोग होता है।" },
+    { t: "The policemen (A) / who were on duty in this area (B) / were discovered (C) / two drug addicts. (D) / No Error (E)", a: 2, s: "Part (C): 'were discovered' के बदले 'discovered' होगा। पुलिसवालों ने खोजा (Active), न कि उन्हें खोजा गया।" },
+    { t: "The first President (A) / of India, Dr. Rajendra Prasad (B) / was known by all types (C) / of people in the world. (D) / No Error (E)", a: 2, s: "Part (C): 'known by' के बदले 'known to' होगा। Known के बाद Passive Voice में Preposition 'to' का प्रयोग होता है।" },
+    { t: "The P. M. assured (A) / the people that his government (B) / would do its best (C) / to suppress communalism. (D) / No Error (E)", a: 4, s: "No Error. वाक्य शुद्ध है।" },
+    { t: "The teacher asked (A) / the students whether they could (B) / tell the name of the man (C) / who had been discovered America. (D) / No Error (E)", a: 3, s: "Part (D): 'had been discovered' के बदले 'had discovered' होगा। (Active Voice: जिसने अमेरिका की खोज की)।" },
+    { t: "It believed (A) / that God is (B) / omnipresent and (C) / omnipotent. (D) / No Error (E)", a: 0, s: "Part (A): 'It believed' के बदले 'It is believed' होगा। यह माना जाता है (Passive)।" },
+    { t: "We have not (A) / informed him (B) / about the accident (C) / yet. (D) / No Error (E)", a: 4, s: "No Error. वाक्य Active Voice में है और सही है।" },
+    { t: "You are kindly requested (A) / to complete your assignment (B) / before Monday (C) / without fail. (D) / No Error (E)", a: 0, s: "Part (A): 'kindly' शब्द का प्रयोग नहीं होगा। 'Requested' में ही विनम्रता निहित है, और Passive में 'You are requested' पर्याप्त है।" },
+    { t: "The letter (A) / was written (B) / by him (C) / yesterday. (D) / No Error (E)", a: 4, s: "No Error. Passive structure (was + V3) सही है।" },
+    { t: "He wounded (A) / seriously in the fight (B) / and was taken (C) / to the hospital. (D) / No Error (E)", a: 0, s: "Part (A): 'He wounded' के बदले 'He was wounded' होगा। वह घायल हुआ (Passive), उसने घायल नहीं किया।" },
+    { t: "A conclusion (A) / was arrived (B) / by the members (C) / of the committee. (D) / No Error (E)", a: 1, s: "Part (B): 'arrived' के बाद 'at' का प्रयोग होगा। 'Arrive at a conclusion' सही Phrase है, Passive में Preposition साथ रहता है।" },
+    { t: "I was surprised (A) / by his conduct (B) / and the way (C) / he behaved. (D) / No Error (E)", a: 1, s: "Part (B): 'by' के बदले 'at' का प्रयोग होगा। Surprised at something." },
+    { t: "They were pleased (A) / by the news (B) / which they had (C) / received a day before. (D) / No Error (E)", a: 1, s: "Part (B): 'by' के बदले 'with' का प्रयोग होगा। Pleased with something." },
+    { t: "A Police Inspector sent (A) / to my house (B) / and all the rooms (C) / were checked. (D) / No Error (E)", a: 0, s: "Part (A): 'sent' के पहले 'was' का प्रयोग होगा। इंस्पेक्टर को भेजा गया (Passive)।" },
+    { t: "The dacoits looted (A) / the house and before (B) / the police arrived (C) / the things were taken away. (D) / No Error (E)", a: 3, s: "Part (D): 'the things were taken away' के बदले 'they took away the things' होगा। Active Voice का प्रयोग बेहतर है (Parallelism: looted... took away)।" },
+    { t: "When the leader (A) / was shot dead, (B) / the followers (C) / were run away. (D) / No Error (E)", a: 3, s: "Part (D): 'were run' के बदले 'ran' होगा। Run Intransitive Verb है, इसका Passive नहीं बनता।" },
+    { t: "He was said (A) / to have been won (B) / the prize because of (C) / the partiality of the judges. (D) / No Error (E)", a: 1, s: "Part (B): 'been' का प्रयोग नहीं होगा। 'To have won' (Active Infinitive) सही है क्योंकि उसने इनाम जीता।" },
+    { t: "The burgalars were broken (A) / into the house and (B) / took away some cash (C) / and many precious things. (D) / No Error (E)", a: 0, s: "Part (A): 'were broken' के बदले 'broke' होगा। चोरों ने ताला तोड़ा (Active)।" },
+    { t: "She advised by (A) / us to meet the Chairman (B) / and appraise him of her (C) / subordinate's misconduct. (D) / No Error (E)", a: 0, s: "Part (A): 'advised' के पहले 'was' का प्रयोग होगा। She was advised (उसे सलाह दी गई)।" },
+    { t: "The needy man (A) / was approched to the money lender (B) / and requested him to (C) / lend him some money. (D) / No Error (E)", a: 1, s: "Part (B): 'was' का प्रयोग नहीं होगा। आदमी ने अप्रोच किया (Active: approached)।" },
+    { t: "When the damage has been (A) / done and the future of the (B) / people has darkened, (C) / nothing will be of any help. (D) / No Error (E)", a: 2, s: "Part (C): 'has' के बाद 'been' का प्रयोग होगा (has been darkened) क्योंकि भविष्य अंधकारमय हो गया है (Passive)।" },
+    { t: "It was suggested (A) / by the doctor (B) / that the patient (C) / should be taken care. (D) / No Error (E)", a: 3, s: "Part (D): 'care' के बाद 'of' का प्रयोग होगा। Take care of -> Taken care of." },
+    { t: "The bed has been arranged (A) / for the newly married (B) / couple but it has (C) / not been slept. (D) / No Error (E)", a: 3, s: "Part (D): 'slept' के बाद 'in' या 'on' का प्रयोग होगा। Sleep in a bed -> Slept in." },
+    { t: "The Chief Minister laid (A) / the foundation of a bridge (B) / and was hoped that it would be (C) / completed by January. (D) / No Error (E)", a: 2, s: "Part (C): 'was' का प्रयोग नहीं होगा। मुख्यमंत्री ने उम्मीद की (Active: and hoped)।" },
+    { t: "I was listened (A) / by the group (B) / of students with (C) / great attention. (D) / No Error (E)", a: 0, s: "Part (A): 'listened' के बाद 'to' का प्रयोग होगा। Listen to someone -> I was listened to." },
+    { t: "No instructions (A) / have been given (B) / regarding the (C) / new project. (D) / No Error (E)", a: 4, s: "No Error. वाक्य शुद्ध है।" },
+    { t: "A letter (A) / should be written (B) / by you to your (C) / father immediately. (D) / No Error (E)", a: 1, s: "Part (B): 'be written' के बदले 'write' होगा यदि सन्दर्भ Active है (You should write)। लेकिन अगर Passive सही माना जाए तो No Error. Note: किताब के अनुसार (C) 'be written' के बदले 'write' और Subject 'You' होना चाहिए था।" },
+    { t: "The work (A) / has been done (B) / properly by (C) / the workers. (D) / No Error (E)", a: 4, s: "No Error. वाक्य शुद्ध है।" },
+    { t: "The child (A) / was annoyed (B) / by the treatment (C) / he received. (D) / No Error (E)", a: 2, s: "Part (C): 'by' के बदले 'at' होगा। Annoyed at something." },
+    { t: "The thief (A) / was to detain (B) / at the police station (C) / for interrogation. (D) / No Error (E)", a: 1, s: "Part (B): 'was to detain' के बदले 'was to be detained' या 'had been detained' होगा। (Passive: चोर को रोका जाना था)।" },
+    { t: "Five persons (A) / killed in the accident (B) / that took place (C) / yesterday. (D) / No Error (E)", a: 1, s: "Part (B): 'killed' के पहले 'were' का प्रयोग होगा। (Were killed)।" },
+    { t: "There is (A) / a house (B) / to build in this (C) / plot. (D) / No Error (E)", a: 2, s: "Part (C): 'to build' के बदले 'to be built' होगा। (Passive Infinitive)।" },
+    { t: "I have (A) / a lot of work (B) / to do. (C) / No Error (D) (E)", a: 4, s: "No Error. Infinitive Active रहता है जब Subject मौजूद हो।" },
+    { t: "This work (A) / is to be (B) / done by him. (C) / No Error (D) (E)", a: 4, s: "No Error. Passive Infinitive सही है।" },
+    { t: "Having found (A) / guilty of murder (B) / they were sentenced (C) / to life imprisonment. (D) / No Error (E)", a: 0, s: "Part (A): 'Having found' के बदले 'Having been found' होगा। (दोषी पाए जाने पर - Passive)।" },
+    { t: "The report says that (A) / a lot of things (B) / including some drugs are (C) / to sell in the shop. (D) / No Error (E)", a: 3, s: "Part (D): 'to sell' के बदले 'to be sold' होगा। चीजें बेची जानी हैं।" },
+    { t: "Cholera (A) / was broken out (B) / in this village (C) / last week. (D) / No Error (E)", a: 1, s: "Part (B): 'was broken out' के बदले 'broke out' होगा। Break out का Passive नहीं होता।" },
+    { t: "Ram (A) / was married (B) / a poor girl (C) / last year. (D) / No Error (E)", a: 1, s: "Part (B): 'was' का प्रयोग नहीं होगा। Ram married a girl. (Active)। (अगर Passive होता तो 'was married to' होता)।" },
+    { t: "I was (A) / surprised at (B) / his behaviour. (C) / No Error (D) (E)", a: 4, s: "No Error. Surprised at सही है।" },
+    { t: "The meeting (A) / was taken place (B) / in the hall (C) / yesterday. (D) / No Error (E)", a: 1, s: "Part (B): 'was taken place' के बदले 'took place' होगा। Take place का Passive नहीं होता।" },
+    { t: "I know the man (A) / whom was helped (B) / by the good (C) / samaritan. (D) / No Error (E)", a: 1, s: "Part (B): 'whom' के बदले 'who' होगा। Who was helped (Subject of Passive Verb)।" },
+    { t: "No other leader of India (A) / is hold in so high esteem (B) / as Mahatma Gandhi, who is (C) / called the Father of the Nation. (D) / No Error (E)", a: 1, s: "Part (B): 'hold' के बदले 'held' होगा। Is + V3 (Passive)।" },
+    { t: "The names record (A) / in this register deserve (B) / much attention (C) / of the police officers. (D) / No Error (E)", a: 0, s: "Part (A): 'record' के बदले 'recorded' होगा। (Past Participle: The names recorded = which are recorded)।" },
+    { t: "The lonely traveller puzzled (A) / when he discovered (B) / the foot prints (C) / on the sand. (D) / No Error (E)", a: 0, s: "Part (A): 'puzzled' के पहले 'was' का प्रयोग होगा। वह हैरान हो गया (Passive effect)।" }
+];
+
+let curQ = 0, qList = [], uAns = {}, sub = false, tmr;
+
+function start(set) {
+    document.getElementById('start').style.display = 'none';
+    qList = db; // All questions in one go as they are 45
+    
+    let h = '';
+    qList.forEach((_, i) => h += `<div class="pal-btn" id="p${i}" onclick="jump(${i})">${i+1}</div>`);
+    document.getElementById('pal').innerHTML = h;
+
+    load(0);
+    
+    let t = 900;
+    tmr = setInterval(() => {
+        t--;
+        let m = Math.floor(t/60).toString().padStart(2,'0');
+        let s = (t%60).toString().padStart(2,'0');
+        document.getElementById('time').innerText = m+':'+s;
+        if(t<=0) submit();
+    }, 1000);
+}
+
+function load(i) {
+    curQ = i;
+    let d = qList[i];
+    
+    let txt = d.t.replace(/\(([A-E])\)/g, '<span class="marker">($1)</span>');
+    document.getElementById('q-txt').innerHTML = txt;
+    document.getElementById('q-idx').innerText = 'Q' + (i+1);
+
+    let hasE = d.t.includes("(E)");
+    let opts = ["(A)", "(B)", "(C)", "(D)"];
+    if(hasE) opts.push("No Error (E)");
+    else opts[3] = "No Error (D)"; 
+
+    let h = '';
+    opts.forEach((l, idx) => {
+        let sel = uAns[i] === idx ? 'selected' : '';
+        let style = '';
+        if(sub) {
+            if(idx === d.a) style = 'border-color:#0acf83; background:#e5fbf2;';
+            else if(sel && idx !== d.a) style = 'border-color:#f25050; background:#fef1f1;';
+        }
+        h += `<div class="opt ${sel}" style="${style}" onclick="pick(${idx})">
+            <div class="circle"></div><span>${l}</span>
+        </div>`;
+    });
+    document.getElementById('opts').innerHTML = h;
+
+    document.querySelectorAll('.pal-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('p'+i).classList.add('active');
+
+    if(sub) {
+        document.getElementById('sol').style.display = 'block';
+        document.getElementById('sol-txt').innerText = d.s;
+    } else {
+        document.getElementById('sol').style.display = 'none';
+    }
+}
+
+function pick(o) {
+    if(sub) return;
+    uAns[curQ] = o;
+    document.getElementById('p'+curQ).classList.add('done');
+    load(curQ);
+}
+
+function nav(d) {
+    let n = curQ + d;
+    if(n >= 0 && n < qList.length) load(n);
+}
+
+function jump(i) { load(i); }
+
+function submit() {
+    clearInterval(tmr);
+    sub = true;
+    document.querySelector('.submit').style.display = 'none';
+    let sc = 0;
+    qList.forEach((q, i) => {
+        if(uAns[i] === q.a) sc += 1;
+        else if(uAns[i] !== undefined) sc -= 0.25;
+    });
+    alert('Score: ' + sc);
+    load(curQ);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SSC Articles Mock - THE SSC SCHOLARS</title>
+<style>
+    :root { 
+        --header-h: 60px;
+        --sidebar-w: 280px;
+        --blue: #007bff;
+        --green: #0acf83; 
+        --red: #f25050;
+        --gray-bg: #f2f3f5;
+        --border: #e0e0e0;
+    }
+    
+    * { box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; background: var(--gray-bg); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* HEADER */
+    header { height: var(--header-h); background: #fff; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    
+    .logo { font-weight: 800; font-size: 1.1rem; color: #1a202c; letter-spacing: 0.5px; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+    .logo::before { content: '🎓'; font-size: 1.4rem; }
+    
+    .timer-box { background: #eef2f8; color: #333; padding: 6px 12px; border-radius: 4px; font-weight: 600; display: flex; align-items: center; gap: 5px; border: 1px solid #d1d9e6; }
+    .submit-btn { background: var(--green); color: white; border: none; padding: 8px 24px; border-radius: 4px; font-weight: 700; cursor: pointer; letter-spacing: 0.5px; transition: background 0.2s; }
+    .submit-btn:hover { background: #08b974; }
+
+    /* LAYOUT */
+    .container { display: flex; flex: 1; height: calc(100vh - var(--header-h)); }
+    
+    /* LEFT: QUESTION PANEL */
+    .q-panel { flex: 1; background: #fff; margin: 15px; border-radius: 8px; display: flex; flex-direction: column; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden; }
+    
+    .q-top-bar { padding: 15px 25px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #fff; }
+    .q-num { font-weight: 700; color: #333; font-size: 1.1rem; }
+    .marks { font-size: 0.9rem; color: #666; background: #f8f9fa; padding: 4px 8px; border-radius: 4px; border: 1px solid #eee; }
+    .marks .pos { color: var(--green); font-weight: bold; }
+    .marks .neg { color: var(--red); }
+
+    .q-body { flex: 1; padding: 25px; overflow-y: auto; }
+    
+    .question-text { font-size: 1.2rem; line-height: 1.7; color: #2d3748; margin-bottom: 30px; font-weight: 500; }
+    .highlight-part { color: var(--blue); font-weight: bold; padding: 0 4px; background: #ebf8ff; border-radius: 3px; }
+
+    /* OPTIONS */
+    .options-list { display: flex; flex-direction: column; gap: 12px; }
+    .option-item { 
+        display: flex; align-items: center; 
+        padding: 14px 18px; 
+        border: 2px solid #e2e8f0; 
+        border-radius: 8px; 
+        cursor: pointer; 
+        transition: all 0.2s;
+        background: #fff;
+    }
+    .option-item:hover { background: #f7fafc; border-color: #cbd5e0; }
+    .option-item.selected { border-color: var(--blue); background: #ebf8ff; }
+    
+    .radio-circle { 
+        width: 20px; height: 20px; border: 2px solid #a0aec0; border-radius: 50%; margin-right: 15px; 
+        position: relative; display: flex; align-items: center; justify-content: center; transition: 0.2s;
+    }
+    .option-item.selected .radio-circle { border-color: var(--blue); }
+    .option-item.selected .radio-circle::after { content: ''; width: 10px; height: 10px; background: var(--blue); border-radius: 50%; }
+
+    .opt-label { font-size: 1.05rem; color: #4a5568; font-weight: 500; }
+
+    /* EXPLANATION BOX */
+    .solution-box { margin-top: 30px; border: 1px solid #bee3f8; background: #ebf8ff; border-radius: 8px; overflow: hidden; display: none; animation: slideUp 0.3s ease-out; }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    
+    .sol-header { background: #bee3f8; padding: 12px 20px; font-weight: bold; color: #2b6cb0; font-size: 0.95rem; border-bottom: 1px solid #90cdf4; }
+    .sol-body { padding: 20px; color: #2d3748; line-height: 1.6; font-size: 1rem; }
+
+    /* FOOTER */
+    .q-footer { padding: 15px 25px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; background: #fff; }
+    .btn { padding: 10px 24px; border: 1px solid #cbd5e0; background: #fff; border-radius: 6px; cursor: pointer; font-weight: 600; color: #4a5568; transition: 0.2s; }
+    .btn:hover { background: #f7fafc; border-color: #a0aec0; }
+    .btn-save { background: var(--blue); color: white; border: 1px solid var(--blue); }
+    .btn-save:hover { background: #0062cc; border-color: #0062cc; }
+
+    /* RIGHT SIDEBAR */
+    .sidebar { width: var(--sidebar-w); background: #fff; border-left: 1px solid var(--border); display: flex; flex-direction: column; }
+    .user-profile { padding: 20px; border-bottom: 1px solid var(--border); background: #f8f9fa; display: flex; align-items: center; gap: 12px; }
+    .avatar { width: 40px; height: 40px; background: #cbd5e0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; font-size: 1.2rem; }
+    
+    .palette-info { padding: 10px 20px; background: #fff; font-size: 0.85rem; color: #718096; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
+    .palette-area { flex: 1; padding: 20px; overflow-y: auto; }
+    .palette-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+    .p-btn { 
+        height: 38px; border-radius: 6px; border: 1px solid #e2e8f0; background: #fff; 
+        cursor: pointer; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; 
+        transition: 0.2s; font-weight: 500; color: #4a5568;
+    }
+    .p-btn:hover { background: #edf2f7; }
+    .p-btn.active { border: 2px solid var(--blue); color: var(--blue); font-weight: bold; transform: scale(1.05); }
+    .p-btn.answered { background: var(--green); color: white; border-color: var(--green); }
+    .p-btn.not-answered { background: var(--red); color: white; border-color: var(--red); }
+
+    /* START SCREEN */
+    #start-screen { position: fixed; inset: 0; background: rgba(255,255,255,0.98); z-index: 100; display: flex; align-items: center; justify-content: center; }
+    .start-card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); width: 450px; text-align: center; border: 1px solid #e2e8f0; }
+    .set-btn { display: block; width: 100%; padding: 16px; margin: 12px 0; background: #fff; border: 2px solid #e2e8f0; color: #4a5568; font-weight: 700; border-radius: 8px; cursor: pointer; transition: 0.2s; font-size: 1.1rem; text-align: left; padding-left: 20px; position: relative; }
+    .set-btn::after { content: '→'; position: absolute; right: 20px; opacity: 0.5; }
+    .set-btn:hover { border-color: var(--blue); color: var(--blue); background: #ebf8ff; }
+
+    @media (max-width: 768px) {
+        .sidebar { display: none; }
+        .q-panel { margin: 0; border-radius: 0; }
+        .container { flex-direction: column; }
+        .logo { font-size: 0.8rem; } 
+        .q-body { padding: 15px; }
+    }
+</style>
+</head>
+<body>
+
+<div id="start-screen">
+    <div class="start-card">
+        <h1 style="margin-top:0; color:#2d3748; font-size: 1.8rem;">Articles Practice</h1>
+        <p style="color:#718096; margin-bottom:30px;">Mirror of Common English • Chapter 1</p>
+        <button class="set-btn" onclick="startTest(1)">🚀 Start Set 1 (Q1 - Q25)</button>
+        <button class="set-btn" onclick="startTest(2)">🎯 Start Set 2 (Q26 - Q50)</button>
+    </div>
+</div>
+
+<header>
+    <div class="logo">Powered by THE SSC SCHOLARS OFFICIAL</div>
+    <div class="timer-box">
+        <span>⏱</span> <span id="timer">15:00</span>
+    </div>
+    <button class="submit-btn" onclick="submitTest()">SUBMIT TEST</button>
+</header>
+
+<div class="container">
+    <div class="q-panel">
+        <div class="q-top-bar">
+            <div class="q-num" id="q-num-disp">Question 1</div>
+            <div class="marks"><span class="pos">+1.0</span> / <span class="neg">-0.25</span></div>
+        </div>
+        
+        <div class="q-body">
+            <div class="question-text" id="q-text">Loading...</div>
+            
+            <div class="options-list" id="options-container"></div>
+
+            <div class="solution-box" id="solution-box">
+                <div class="sol-header">💡 Solution & Explanation</div>
+                <div class="sol-body" id="sol-text"></div>
+            </div>
+        </div>
+
+        <div class="q-footer">
+            <button class="btn" onclick="changeQ(-1)">Previous</button>
+            <button class="btn btn-save" onclick="saveNext()">Save & Next</button>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="user-profile">
+            <div class="avatar">S</div>
+            <div>
+                <div style="font-size:0.95rem; font-weight:700; color:#2d3748;">SSC Aspirant</div>
+                <div style="font-size:0.8rem; color:#718096;">Articles Chapter</div>
+            </div>
+        </div>
+        <div class="palette-info">
+            <span>Question Palette</span>
+        </div>
+        <div class="palette-area">
+            <div class="palette-grid" id="palette-grid"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// --- FULL DETAILED DATA FOR ARTICLES CHAPTER ---
+const allQuestions = [
+    // SET 1 (Q1-25)
+    { q: "In science the credit goes to man (A) / who convinces the world, (B) / not to the man to whom (C) / the idea first occurs. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'man' के पहले 'the' का प्रयोग होगा (The man)। जब man का प्रयोग किसी निश्चित व्यक्ति (The boy who...) के अर्थ में हो, तो 'the' लगता है।" },
+    { q: "It is only after (A) / the war is over (B) / that people realise (C) / how bad it was. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'the war' के बदले 'a war' होगा। यहाँ किसी खास युद्ध की नहीं, बल्कि सामान्यतः किसी भी युद्ध (any war) की बात हो रही है।" },
+    { q: "Of the two (A) / answers, this is definitely (B) / better. (C) / No Error (D)", ans: 2, sol: "Part (C) में 'better' के पहले 'the' लगेगा ('the better')। Rule: यदि Comparative Degree के बाद 'of the two' हो, तो उससे पहले The लगता है।" },
+    { q: "He is unfortunate enough (A) / to lose (B) / few friends he made (C) / during his stay at Patna. (D) / No Error (E)", ans: 2, sol: "Part (C) में 'few' के बदले 'the few' होगा। 'The few' का अर्थ है 'जो कुछ थोड़े से'। 'Few' का अर्थ होता है 'न के बराबर'।" },
+    { q: "There were a number (A) / of pretty girls in the party (B) / but it was Ragini (C) / who remained a centre of attraction. (D) / No Error (E)", ans: 3, sol: "Part (D) में 'a centre' के बदले 'the centre' होगा। Idiom: 'The centre of attraction'." },
+    { q: "I have been (A) / informed that (B) / Dr. Sinha visits Patna (C) / the following month. (D) / No Error (E)", ans: 4, sol: "No Error. वाक्य पूर्णतः शुद्ध है।" },
+    { q: "He is the best artist (A) / of the time but unfortunately (B) / least recognised. (C) / No Error (D)", ans: 2, sol: "Part (C) में 'least' के पहले 'the' लगेगा ('the least')। Superlative Degree के पहले The का प्रयोग होता है।" },
+    { q: "He said that he felt nervous (A) / because a friend of his (B) / had given him (C) / a very bad news. (D) / No Error (E)", ans: 3, sol: "Part (D) में 'a' का प्रयोग नहीं होगा। 'News' एक Uncountable Noun है, इसके पहले A/An नहीं लगता।" },
+    { q: "I don't like (A) / that type of a man (B) / who does nothing but (C) / find out faults in others. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'a man' के बदले सिर्फ 'man' होगा। Rule: Type of, kind of, sort of के बाद आने वाले Noun के पहले Article नहीं लगता।" },
+    { q: "He claims to be a linguist (A) / but, in reality, he (B) / does not know even (C) / the ABC of linguistics. (D) / No Error (E)", ans: 4, sol: "No Error. वाक्य शुद्ध है। 'The ABC of' एक सही मुहावरा है जिसका अर्थ है 'प्रारंभिक ज्ञान'।" },
+    { q: "The remedy lies (A) / in promoting values of humanism (B) / and democracy so as to combat (C) / the oncoming brand of fascism. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'values' के पहले 'the' लगेगा ('the values')। जब Noun + of + Noun हो, तो पहले Noun के साथ The लगता है।" },
+    { q: "When the house was (A) / set on the fire, all the people (B) / started crying at the top (C) / of their voices. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'on the fire' के बदले 'on fire' होगा। 'Set on fire' एक Idiom है, इसमें Article नहीं लगता।" },
+    { q: "A first step (A) / in a rational solution (B) / to any problem is the (C) / recognition of the fact that a problem exists. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'A' के बदले 'The' होगा। Ordinal Numbers (First, Second, Next) के पहले The लगता है।" },
+    { q: "Little knowledge (A) / of music that he possessed (B) / proved to be a boon for him (C) / when he was utterly helpless. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'Little' के बदले 'The little' होगा। 'The little' का अर्थ है 'जो थोड़ा बहुत'।" },
+    { q: "Don't talk to him, he always (A) / remains in temper (B) / these days. (C) / No Error (D)", ans: 1, sol: "Part (B) में 'in a temper' होगा। यह एक Idiom है (गुस्से में होना)।" },
+    { q: "He boasts of (A) / having good knowledge (B) / of mathematics but everybody knows how far he is good at mathematics. (C) / No Error (D)", ans: 1, sol: "Part (B) में 'good' के पहले 'a' लगेगा (having a good knowledge). Knowledge वैसे uncountable है, लेकिन जब इसके आगे adjective हो तो 'a' लगता है।" },
+    { q: "It was by a mistake (A) / that he caught (B) / her hand. (C) / No Error (D)", ans: 0, sol: "Part (A) में 'by a mistake' गलत है. सही idiom 'by mistake' है (without 'a')." },
+    { q: "These orders of (A) / the Manager (B) / may put the lives of (C) / two thousand workers in a danger. (D) / No Error (E)", ans: 3, sol: "Part (D) में 'in a danger' गलत है. सही idiom 'in danger' है." },
+    { q: "I inspired him (A) / to take the heart (B) / in all adverse situations and deserve to be called a real hero. (C) / No Error (D)", ans: 1, sol: "Part (B) में 'take the heart' गलत है. सही idiom 'take heart' (हिम्मत रखना) है." },
+    { q: "In my opinion it is not the failures (A) / that have made (B) / him lose the heart but the lack of emotional support. (C) / No Error (D)", ans: 2, sol: "Part (C) में 'lose the heart' गलत है. सही idiom 'lose heart' है." },
+    { q: "The most happy (A) / marriage would be (B) / a union of a deaf man to a blind woman. (C) / No Error (D)", ans: 2, sol: "Part (C) में 'a union' के बदले 'the union' होगा (The + Noun + of + Noun construction)." },
+    { q: "John suggested to (A) / his brothers that they should (B) / go to the school regularly (C) / and do their home work sincerely. (D) / No Error (E)", ans: 2, sol: "Part (C) में 'the school' गलत है. जब school मौलिक उद्देश्य (पढ़ने) के लिए हो तो 'the' नहीं लगता. 'Go to school' सही है." },
+    { q: "After returning (A) / from the jail, he has abandoned (B) / all the criminal activities and is determined to lead a simple life. (C) / No Error (D)", ans: 1, sol: "Part (B) में 'from the jail' गलत है. सजा काटकर लौटने के अर्थ में 'from jail' होगा (No 'the')." },
+    { q: "He was an atheist (A) / but now-a-days he goes to the church (B) / and offers prayers for hours. (C) / No Error (D)", ans: 1, sol: "Part (B) में 'go to the church' गलत है. पूजा के लिए जाने पर 'go to church' होता है." },
+    { q: "His father (A) / forbade him to go (B) / to cinema late at night. (C) / No Error (D)", ans: 2, sol: "Part (C) में 'to cinema' गलत है. सही प्रयोग 'to the cinema' है." },
+
+    // SET 2 (Q26-50)
+    { q: "The fact that the compact car (A) / is better than (B) / conventional cars has (C) / been proved by its sales. (D) / No Error (E)", ans: 4, sol: "No Error. वाक्य शुद्ध है." },
+    { q: "There was little (A) / milk in the bottle and she gave it (B) / to the baby when it started weeping. (C) / No Error (D)", ans: 0, sol: "Part (A) में 'little' (न के बराबर) के बदले 'a little' (थोड़ा) होगा, क्योंकि उसने बच्चे को दूध दिया है." },
+    { q: "He leads (A) / a very busy life (B) / so he goes everywhere (C) / by a car. (D) / No Error (E)", ans: 3, sol: "Part (D) में 'by a car' गलत है. यात्रा के साधन के रूप में 'by car' (No article) होता है." },
+    { q: "Thanks to an insight (A) / and persistence of the local doctor, (B) / hundreds of victims have been (C) / able to resume a normal life. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'an insight' के बदले 'the insight' होगा (The + Noun + of + Noun)." },
+    { q: "In a hour's time (A) / when I had finished the work, (B) / I got up and slipped out unnoticed. (C) / No Error (D)", ans: 0, sol: "Part (A) में 'a hour' गलत है. 'An hour' सही होगा (vowel sound)." },
+    { q: "He uses (A) / the mock-heroic (B) / style to depict (C) / a violence. (D) / No Error (E)", ans: 3, sol: "Part (D) में 'a violence' गलत है. Violence uncountable noun है, article नहीं लगेगा." },
+    { q: "People in Darwin (A) / had become so accustomed to cyclone warnings (B) / that few of them paid any attention to the radio warnings which began this morning. (C) / No Error (D)", ans: 4, sol: "No Error. वाक्य शुद्ध है." },
+    { q: "One should (A) / be true to one's promises (B) / in order to earn (C) / name and fame in the life. (D) / No Error (E)", ans: 3, sol: "Part (D) में 'in the life' गलत है. व्यापक अर्थ में 'Life' के पहले Article नहीं लगता. सही: 'in life'." },
+    { q: "The seed (A) / of all the modern amenities (B) / lies in (C) / the science. (D) / No Error (E)", ans: 3, sol: "Part (D) में 'the science' गलत है. व्यापक अर्थ में Science के पहले The नहीं लगता." },
+    { q: "Music is science (A) / but singing is an art (B) / said the (C) / teacher. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'Music is a science' होगा. यहाँ Science का प्रयोग 'ज्ञान की एक शाखा' के रूप में हुआ है." },
+    { q: "We should spend (A) / a good part of the day (B) / in out of door activities and games (C) / because staying indoors all the time is bad for health. (D) / No Error (E)", ans: 4, sol: "No Error. वाक्य शुद्ध है." },
+    { q: "He should mix (A) / his authority with little (B) / of courtesy and (C) / common sense. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'little' के बदले 'a little' होगा (Positive sense)." },
+    { q: "It is a pity (A) / that the son of millionaire (B) / should indulge (C) / in stealing. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'son of millionaire' के बदले 'son of a millionaire' होगा." },
+    { q: "It is the most important (A) / question which you have (B) / to prepare very carefully. (C) / No Error (D)", ans: 0, sol: "Part (A) में 'the most' के बदले 'a most' होगा. यहाँ तुलना नहीं हो रही, बल्कि 'very important' का अर्थ है." },
+    { q: "Brahmaputra is (A) / one of the longest rivers (B) / that originate (C) / in the Himalayas. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'The Brahmaputra' होगा. नदियों के नाम के पहले The लगता है." },
+    { q: "The Ganges (A) / is for North India (B) / what Krishna (C) / is for South India. (D) / No Error (E)", ans: 2, sol: "Part (C) में 'The Krishna' होगा (नदी का नाम)." },
+    { q: "The first European (A) / sailor to come to India (B) / in modern times (C) / was Vasco-da-Gama. (D) / No Error (E)", ans: 4, sol: "No Error. वाक्य शुद्ध है." },
+    { q: "The trees in a forest (A) / must be properly counted and numbered (B) / and proper entries be made (C) / in the register. (D) / No Error (E)", ans: 4, sol: "No Error. वाक्य शुद्ध है." },
+    { q: "The principal (A) / asked the girls to return (B) / to the hostel before (C) / the sunset. (D) / No Error (E)", ans: 3, sol: "Part (D) में 'the sunset' गलत है. Before sunset, after sunrise आदि में Article नहीं लगता." },
+    { q: "He found (A) / himself in a trouble (B) / when he saw no (C) / rickshaw outside the station. (D) / No Error (E)", ans: 1, sol: "Part (B) में 'in a trouble' गलत है. सही idiom 'in trouble' है." },
+    { q: "He said (A) / that he did not feel (B) / any need to discuss (C) / the episode in the detail. (D) / No Error (E)", ans: 3, sol: "Part (D) में 'in the detail' गलत है. सही idiom 'in detail' है." },
+    { q: "In the conclusion (A) / it may be safely asserted that (B) / the poet preaches some (C) / moral implicitly. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'In the conclusion' गलत है. सही idiom 'In conclusion' है." },
+    { q: "All the staffs (A) / of this office hold the view (B) / that Mr. Sinha is a very wise (C) / and an intelligent officer. (D) / No Error (E)", ans: 3, sol: "Part (D) में 'an intelligent' गलत है. जब दो adjectives एक ही व्यक्ति के लिए हों, तो article सिर्फ पहले वाले के साथ लगता है (a very wise and intelligent officer)." },
+    { q: "The man (A) / is the only creature (B) / that is endowed with (C) / the power of speech. (D) / No Error (E)", ans: 0, sol: "Part (A) में 'The man' गलत है. मानव जाति के अर्थ में 'Man' के पहले The नहीं लगता." },
+    { q: "It is very difficult (A) / to point out the number of (B) / the creatures living (C) / on earth. (D) / No Error (E)", ans: 4, sol: "No Error. वाक्य शुद्ध है." }
+];
+
+// --- ENGINE ---
+let setQuestions = [];
+let currentIdx = 0;
+let userAnswers = {};
+let isSubmitted = false;
+let timerRef;
+const optionLabels = ["(A)", "(B)", "(C)", "(D)", "No Error (E)"];
+
+function startTest(setNum) {
+    const start = (setNum-1) * 25;
+    const end = start + 25;
+    setQuestions = allQuestions.slice(start, end);
+    
+    document.getElementById('start-screen').style.display = 'none';
+    
+    // Init Palette
+    const pGrid = document.getElementById('palette-grid');
+    pGrid.innerHTML = setQuestions.map((_, i) => 
+        `<div class="p-btn" id="pal-${i}" onclick="jumpTo(${i})">${i+1}</div>`
+    ).join('');
+
+    loadQuestion(0);
+    startTimer();
+}
+
+function startTimer() {
+    let timeLeft = 900; // 15 mins
+    timerRef = setInterval(() => {
+        timeLeft--;
+        let m = Math.floor(timeLeft/60).toString().padStart(2,'0');
+        let s = (timeLeft%60).toString().padStart(2,'0');
+        document.getElementById('timer').innerText = `${m}:${s}`;
+        if(timeLeft <= 0) submitTest();
+    }, 1000);
+}
+
+function loadQuestion(idx) {
+    currentIdx = idx;
+    const qData = setQuestions[idx];
+    
+    // Update Question Text (Highlight markers)
+    let formattedText = qData.q.replace(/\((A|B|C|D|E)\)/g, '<span class="highlight-part">($1)</span>');
+    document.getElementById('q-text').innerHTML = formattedText;
+    document.getElementById('q-num-disp').innerText = `Question ${idx+1}`;
+
+    // Generate Vertical Options
+    const optContainer = document.getElementById('options-container');
+    optContainer.innerHTML = optionLabels.map((label, i) => {
+        const isSelected = userAnswers[idx] === i;
+        return `
+        <div class="option-item ${isSelected ? 'selected' : ''}" onclick="selectOption(${i})">
+            <div class="radio-circle"></div>
+            <span class="opt-label">${label}</span>
+        </div>`;
+    }).join('');
+
+    // Palette Update
+    document.querySelectorAll('.p-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(`pal-${idx}`).classList.add('active');
+
+    // Show Solution if Submitted
+    const solBox = document.getElementById('solution-box');
+    if(isSubmitted) {
+        solBox.style.display = 'block';
+        
+        // Highlight correct/wrong in options
+        const opts = document.querySelectorAll('.option-item');
+        opts[qData.ans].style.border = "2px solid #0acf83";
+        opts[qData.ans].style.background = "#e5fbf2";
+        
+        if(userAnswers[idx] !== undefined && userAnswers[idx] !== qData.ans) {
+            opts[userAnswers[idx]].style.border = "2px solid #f25050";
+            opts[userAnswers[idx]].style.background = "#fef1f1";
+        }
+
+        document.getElementById('sol-text').innerText = qData.sol;
+    } else {
+        solBox.style.display = 'none';
+    }
+}
+
+function selectOption(optIndex) {
+    if(isSubmitted) return;
+    userAnswers[currentIdx] = optIndex;
+    
+    const opts = document.querySelectorAll('.option-item');
+    opts.forEach(o => o.classList.remove('selected'));
+    opts[optIndex].classList.add('selected');
+    
+    document.getElementById(`pal-${currentIdx}`).classList.add('answered');
+}
+
+function saveNext() {
+    if(currentIdx < setQuestions.length - 1) loadQuestion(currentIdx + 1);
+}
+
+function changeQ(dir) {
+    if(currentIdx + dir >= 0 && currentIdx + dir < setQuestions.length) {
+        loadQuestion(currentIdx + dir);
+    }
+}
+
+function jumpTo(idx) {
+    loadQuestion(idx);
+}
+
+function submitTest() {
+    clearInterval(timerRef);
+    isSubmitted = true;
+    document.querySelector('.submit-btn').style.display = 'none';
+    
+    let score = 0;
+    setQuestions.forEach((q, i) => {
+        if(userAnswers[i] === q.ans) score += 1;
+        else if(userAnswers[i] !== undefined) score -= 0.25;
+    });
+    
+    alert(`Test Finished!\nScore: ${score} / ${setQuestions.length}`);
+    loadQuestion(currentIdx); 
+}
+</script>
+</body>
+</html>
