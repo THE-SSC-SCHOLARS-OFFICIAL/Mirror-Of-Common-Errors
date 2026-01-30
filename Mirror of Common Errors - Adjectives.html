@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adjectives Mock Test - THE SSC SCHOLARS</title>
+<style>
+    :root { --blue: #007bff; --green: #0acf83; --red: #f25050; --bg: #f2f3f5; }
+    * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body { margin: 0; background: var(--bg); height: 100vh; display: flex; flex-direction: column; }
+
+    /* Header */
+    header { background: #fff; padding: 0 20px; height: 60px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
+    .logo { font-weight: 800; color: #333; }
+    .timer { background: #eef2f8; padding: 5px 10px; border-radius: 4px; font-weight: bold; }
+    .submit { background: var(--green); color: white; border: none; padding: 8px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+
+    /* Main */
+    .container { display: flex; flex: 1; overflow: hidden; }
+    .q-panel { flex: 1; background: #fff; margin: 15px; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    
+    .q-header { padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; font-weight: bold; }
+    .q-body { flex: 1; padding: 20px; overflow-y: auto; }
+    .q-text { font-size: 1.15rem; margin-bottom: 20px; line-height: 1.6; color: #2d3748; }
+    .marker { color: var(--blue); font-weight: bold; background: #ebf8ff; padding: 2px 5px; border-radius: 4px; font-size: 0.9em; margin: 0 2px; }
+
+    /* Options */
+    .opts { display: flex; flex-direction: column; gap: 10px; }
+    .opt { display: flex; align-items: center; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+    .opt:hover { background: #f7fafc; border-color: #cbd5e0; }
+    .opt.selected { border-color: var(--blue); background: #ebf8ff; }
+    .circle { width: 18px; height: 18px; border: 2px solid #a0aec0; border-radius: 50%; margin-right: 15px; position: relative; }
+    .opt.selected .circle { border-color: var(--blue); }
+    .opt.selected .circle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 8px; height: 8px; background: var(--blue); border-radius: 50%; }
+
+    /* Solution */
+    .sol-box { margin-top: 20px; background: #ebf8ff; border: 1px solid #bee3f8; border-radius: 6px; padding: 15px; display: none; }
+    .sol-title { font-weight: bold; color: #2b6cb0; margin-bottom: 5px; }
+
+    /* Footer */
+    .footer { padding: 15px; border-top: 1px solid #eee; display: flex; justify-content: space-between; }
+    .btn { padding: 8px 20px; border: 1px solid #ccc; background: white; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    .btn-save { background: var(--blue); color: white; border: none; }
+
+    /* Sidebar */
+    .sidebar { width: 280px; background: white; border-left: 1px solid #ddd; display: flex; flex-direction: column; }
+    .pal-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; overflow-y: auto; }
+    .pal-btn { height: 35px; border: 1px solid #ddd; background: white; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #555; }
+    .pal-btn.active { border-color: var(--blue); color: var(--blue); border-width: 2px; }
+    .pal-btn.done { background: var(--green); color: white; border-color: var(--green); }
+
+    /* Start Screen */
+    #start { position: fixed; inset: 0; background: rgba(255,255,255,0.98); z-index: 100; display: flex; align-items: center; justify-content: center; }
+    .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 400px; text-align: center; border: 1px solid #ddd; }
+    .start-btn { width: 100%; padding: 15px; margin: 10px 0; background: white; border: 2px solid var(--blue); color: var(--blue); font-weight: bold; border-radius: 8px; cursor: pointer; text-align: left; }
+    .start-btn:hover { background: var(--blue); color: white; }
+
+    @media(max-width:768px) { .sidebar{display:none;} .container{flex-direction:column;} }
+</style>
+</head>
+<body>
+
+<div id="start">
+    <div class="card">
+        <h2>Chapter 7: Adjectives</h2>
+        <p>Mirror of Common English</p>
+        <button class="start-btn" onclick="start(1)">Set 1 (Q1-25)</button>
+        <button class="start-btn" onclick="start(2)">Set 2 (Q26-50)</button>
+    </div>
+</div>
+
+<header>
+    <div class="logo">THE SSC SCHOLARS OFFICIAL</div>
+    <div class="timer" id="time">15:00</div>
+    <button class="submit" onclick="submit()">SUBMIT</button>
+</header>
+
+<div class="container">
+    <div class="q-panel">
+        <div class="q-header">
+            <span id="q-idx">Q1</span>
+            <span>+1.0 / -0.25</span>
+        </div>
+        <div class="q-body">
+            <div class="q-text" id="q-txt"></div>
+            <div class="opts" id="opts"></div>
+            <div class="sol-box" id="sol">
+                <div class="sol-title">Solution</div>
+                <div id="sol-txt"></div>
+            </div>
+        </div>
+        <div class="footer">
+            <button class="btn" onclick="nav(-1)">Prev</button>
+            <button class="btn btn-save" onclick="nav(1)">Save & Next</button>
+        </div>
+    </div>
+    <div class="sidebar">
+        <div style="padding:15px;border-bottom:1px solid #eee;font-weight:bold">Questions</div>
+        <div class="pal-grid" id="pal"></div>
+    </div>
+</div>
+
+<script>
+const db = [
+    // SET 1 (Q1-25)
+    { t: "But for your help, (A) / no boys would have (B) / succeeded in an (C) / All India competition like this. (D) / No Error (E)", a: 4, s: "No Error. 'But for' का अर्थ है 'without'. वाक्य शुद्ध है।" },
+    { t: "He wanted (A) / certain boy (B) / to make entry into (C) / the Principal's chamber. (D) / No Error (E)", a: 1, s: "Part (B): 'certain boy' के बदले 'a certain boy' का प्रयोग होगा। 'Certain' के बाद Plural Noun (boys) आता है, जबकि 'A certain' के बाद Singular Noun (boy)।" },
+    { t: "There were only two (A) / soldiers but each and every (B) / soldier was equal (C) / to five policemen. (D) / No Error (E)", a: 1, s: "Part (B): 'each and every' के बदले 'each' का प्रयोग होगा। 'Each' का प्रयोग दो या दो से अधिक के लिए होता है, लेकिन 'Every' या 'Each and every' का प्रयोग हमेशा दो से अधिक के लिए होता है। यहाँ 'two soldiers' हैं, इसलिए सिर्फ 'Each' सही है।" },
+    { t: "The ten captains (A) / had each an (B) / achievement of (C) / his own. (D) / No Error (E)", a: 4, s: "No Error. वाक्य शुद्ध है। (Note: Part D में 'his' के बदले 'their' का प्रयोग करना गलत होगा क्योंकि Each का प्रयोग हुआ है)।" },
+    { t: "These sort of men (A) / attain worldly success by hook or by (B) / crook so they deserve to (C) / be looked down upon. (D) / No Error (E)", a: 0, s: "Part (A): 'sort' के बदले 'sorts' का प्रयोग होगा क्योंकि इसके पहले Demonstrative Adjective 'These' (Plural) है। 'These sorts of men' सही है।" },
+    { t: "I feel (A) / a certain problems (B) / in the execution (C) / of this plan. (D) / No Error (E)", a: 1, s: "Part (B): 'a certain problems' के बदले 'a certain problem' या 'certain problems' का प्रयोग होगा। 'A certain' के साथ Singular, 'Certain' के साथ Plural।" },
+    { t: "In spite of facing (A) / much problems, he did not (B) / desert the path (C) / of honesty. (D) / No Error (E)", a: 1, s: "Part (B): 'much' के बदले 'many' का प्रयोग होगा। 'Problems' Countable Noun है, इसलिए इसके साथ 'Many' आएगा। 'Much' का प्रयोग Uncountable Nouns (जैसे milk, sugar) के साथ होता है।" },
+    { t: "Can you tell me how many eggs and (A) / milk he has (B) / brought (C) / home? (D) / No Error (E)", a: 2, s: "Part (A/B): 'milk' के पहले 'how much' का प्रयोग होगा। 'How many' का प्रयोग Countable (eggs) के लिए सही है, लेकिन Milk (Uncountable) के लिए 'how much' चाहिए। सही वाक्य: 'how many eggs and how much milk...'." },
+    { t: "Whole the chapter (A) / of the book is full of printing (B) / errors which are the outcome (C) / of the proof reader's carelessness. (D) / No Error (E)", a: 0, s: "Part (A): 'Whole the' के बदले 'The whole' का प्रयोग होगा। The + Whole + Noun सही क्रम है। (किन्तु All के बाद The लगता है: All the chapters)।" },
+    { t: "He did not (A) / like to lend me (B) / any book (C) / or any money. (D) / No Error (E)", a: 4, s: "No Error. Negative वाक्य में 'any' का प्रयोग सही है।" },
+    { t: "Her black long (A) / hair adds (B) / glamour to her looks. (C) / No Error (D) / (E)", a: 0, s: "Part (A): 'black long' के बदले 'long black' का प्रयोग होगा। Adjective Order: Size (long) पहले, फिर Colour (black)। (OSASCOMP rule)।" },
+    { t: "I began to (A) / tremble when I saw (B) / a sharp long knife (C) / in my enemy's hand. (D) / No Error (E)", a: 2, s: "Part (C): 'a sharp long knife' के बदले 'a long sharp knife' होगा। Size (long) पहले, फिर General Description/Quality (sharp)।" },
+    { t: "I saw (A) / an anxious pale girl (B) / who when asked let me know (C) / that she was suffering from consumption. (D) / No Error (E)", a: 1, s: "Part (B): 'an anxious pale girl' के बदले 'a pale anxious girl' का प्रयोग होगा। Physical description (pale) पहले, फिर Emotion/Personality (anxious)।" },
+    { t: "It is a fact that (A) / Mahatma Gandhi was (B) / the first politician (C) / of his time. (D) / No Error (E)", a: 2, s: "Part (C): 'first' के बदले 'foremost' का प्रयोग होगा। First का अर्थ 'पहला' (Order) होता है, जबकि Foremost का अर्थ 'सबसे महत्वपूर्ण' (Most notable) होता है।" },
+    { t: "At the utmost gate (A) / was standing a guard (B) / holding a gun (C) / in his hand. (D) / No Error (E)", a: 0, s: "Part (A): 'utmost' के बदले 'outermost' का प्रयोग होगा। 'Outermost' का अर्थ 'सबसे बाहरी' (दूरी/स्थान) है। 'Utmost' का अर्थ 'भरसक/अत्यधिक' (Degree) होता है।" },
+    { t: "Delhi is (A) / further from (B) / Patna than (C) / Kolkata. (D) / No Error (E)", a: 1, s: "Part (B): 'further' के बदले 'farther' का प्रयोग होगा। 'Farther' का प्रयोग दूरी (Distance) के लिए होता है, 'Further' का अर्थ 'अगला/अतिरिक्त' (in addition) होता है।" },
+    { t: "This book is (A) / undoubtedly preferable than (B) / that in many respects and its printing (C) / is also comparatively good. (D) / No Error (E)", a: 1, s: "Part (B): 'than' के बदले 'to' का प्रयोग होगा। Preferable के बाद हमेशा 'to' आता है।" },
+    { t: "Of the two (A) / players, he is the (B) / luckiest, (C) / be sure. (D) / No Error (E)", a: 2, s: "Part (C): 'luckiest' के बदले 'luckier' का प्रयोग होगा। जब तुलना सिर्फ दो के बीच हो तो Comparative Degree का प्रयोग होता है (The luckier of the two)।" },
+    { t: "You can trust (A) / this agency (B) / for the last news (C) / of this week. (D) / No Error (E)", a: 2, s: "Part (C): 'last' के बदले 'latest' का प्रयोग होगा। 'Latest' का अर्थ 'नवीनतम/ताजा' (Time) है। 'Last' का अर्थ 'अंतिम' (Order) है।" },
+    { t: "Seema is (A) / senior to me but you are (B) / junior than me. (C) / No Error (D) / (E)", a: 2, s: "Part (C): 'than' के बदले 'to' का प्रयोग होगा। Latin Adjectives (Senior, Junior, Superior, Inferior आदि) के बाद 'to' आता है।" },
+    { t: "Everybody knows (A) / that Ragini (B) / is the most unique (C) / singer of this college. (D) / No Error (E)", a: 2, s: "Part (C): 'the most unique' के बदले 'a unique' का प्रयोग होगा। Unique, Perfect, Complete, Round आदि शब्द अपने आप में Superlative अर्थ रखते हैं, इनके पहले more/most नहीं लगता।" },
+    { t: "Rita can sing (A) / much than fifty songs at a (B) / stretch and she has developed (C) / this ability by labouring hard. (D) / No Error (E)", a: 1, s: "Part (B): 'much' के बदले 'more' का प्रयोग होगा। 'Than' के साथ Comparative Degree (More) का प्रयोग होता है।" },
+    { t: "She was curious to (A) / know what it was that made (B) / him stronger (C) / and braver than any man of this village. (D) / No Error (E)", a: 3, s: "Part (D): 'any man' के बदले 'any other man' का प्रयोग होगा। जब एक की तुलना उसी के वर्ग के अन्य सदस्यों से हो, तो 'Any other' का प्रयोग होता है।" },
+    { t: "She has a remarkably (A) / lovingly appearance (B) / which brings her honour (C) / and admiration as well. (D) / No Error (E)", a: 1, s: "Part (B): 'lovingly' के बदले 'loving' का प्रयोग होगा। 'Appearance' Noun है, जिसकी विशेषता Adjective (loving) बताएगा, न कि Adverb (lovingly)।" },
+    { t: "A lots of books (A) / on English Grammar are available (B) / in the market but (C) / this one is the best. (D) / No Error (E)", a: 0, s: "Part (A): 'A lots of' के बदले 'A lot of' या 'Lots of' का प्रयोग होगा। 'A lots of' गलत Phrase है।" },
+
+    // SET 2 (Q26-50)
+    { t: "He does not have (A) / some money to buy a new X-ray (B) / plant, so he is (C) / sunk in anxiety. (D) / No Error (E)", a: 1, s: "Part (B): 'some' के बदले 'any' का प्रयोग होगा। Negative वाक्यों में 'Any' का प्रयोग होता है।" },
+    { t: "Gold is the most precious (A) / of all metals (B) / that are used in ornaments, (C) / as far as we all know. (D) / No Error (E)", a: 4, s: "No Error. वाक्य शुद्ध है।" },
+    { t: "He is the most (A) / successful man (B) / in the world (C) / I have ever known. (D) / No Error (E)", a: 4, s: "No Error. (Explanation Note: Book says E, वाक्य शुद्ध है)।" },
+    { t: "No less (A) / than fifty audiences are sitting (B) / in the hall and waiting for their (C) / beloved artiste's appearance on the stage. (D) / No Error (E)", a: 0, s: "Part (A): 'No less' के बदले 'No fewer' का प्रयोग होगा। Countable Noun (audiences/people) के लिए Fewer का प्रयोग होता है, Less का प्रयोग Quantity के लिए होता है।" },
+    { t: "Her father told her (A) / that it would be all the more (B) / better if she would find her (C) / groom herself. (D) / No Error (E)", a: 1, s: "Part (B): 'more' का प्रयोग नहीं होगा। 'Better' पहले से Comparative है, 'More better' (Double Comparative) गलत है।" },
+    { t: "She had no other (A) / hobby than that of (B) / wearing a dress of (C) / the latest design. (D) / No Error (E)", a: 4, s: "No Error. Other के बाद Than का प्रयोग सही है।" },
+    { t: "This young lady is (A) / more beautiful (B) / but not so cultured (C) / as her youngest sister. (D) / No Error (E)", a: 1, s: "Part (B): 'more beautiful' के बाद 'than' का प्रयोग होगा। सही वाक्य: 'is more beautiful than but not so cultured as...'." },
+    { t: "Much to his fortune, he (A) / married a girl who was (B) / more tall and lovelier than (C) / her elder sister. (D) / No Error (E)", a: 2, s: "Part (C): 'more tall' के बदले 'taller' का प्रयोग होगा। एक Syllable वाले Adjective का Comparative 'er' लगाकर बनता है (Tall-Taller)।" },
+    { t: "What pleases him (A) / more (B) / is a healthy criticism (C) / of his performance. (D) / No Error (E)", a: 1, s: "Part (B): 'more' के बदले 'most' का प्रयोग होगा। यहाँ तुलना नहीं है, बल्कि 'सबसे ज्यादा' का भाव है (What pleases him most)।" },
+    { t: "It was no (A) / other than Indira Gandhi (B) / who evinced an exceptional ability to lead (C) / the country to fame. (D) / No Error (E)", a: 4, s: "No Error. वाक्य शुद्ध है।" },
+    { t: "Now-a-days, (A) / the weather (B) / is getting cold and (C) / colder. (D) / No Error (E)", a: 2, s: "Part (C): 'cold' के बदले 'colder' का प्रयोग होगा। Gradual development (उत्तरोत्तर विकास) दिखाने के लिए दोनों Adjectives Comparative Degree में होने चाहिए (Colder and colder)।" },
+    { t: "He often tells (A) / us that he does not (B) / like anything more (C) / than sleeping peacefully. (D) / No Error (E)", a: 4, s: "No Error. वाक्य शुद्ध है।" },
+    { t: "This photograph (A) / was comparatively better (B) / than that which he had kept (C) / in his purse. (D) / No Error (E)", a: 1, s: "Part (B): 'better' के बदले 'good' का प्रयोग होगा। Comparatively/Relatively के बाद Positive Degree का प्रयोग होता है।" },
+    { t: "She was startled (A) / to see in (B) / her drawing room (C) / a most popular film producer. (D) / No Error (E)", a: 4, s: "No Error. 'A most' का अर्थ 'A very' होता है, जो यहाँ सही है।" },
+    { t: "India is (A) / better than (B) / most others (C) / film producing countries of the world. (D) / No Error (E)", a: 2, s: "Part (C): 'others' के बदले 'other' का प्रयोग होगा। 'Most other' के बाद Noun Plural होता है, Other में s नहीं लगता।" },
+    { t: "None can (A) / believe that (B) / Ramesh is happier (C) / than grieved to know it. (D) / No Error (E)", a: 2, s: "Part (C): 'happier' के बदले 'more happy' का प्रयोग होगा। जब एक ही व्यक्ति के दो गुणों की तुलना हो, तो 'er' नहीं बल्कि 'more' का प्रयोग होता है (More happy than grieved)।" },
+    { t: "Delhi is far (A) / better than any other (B) / metropolis (C) / of Pakistan. (D) / No Error (E)", a: 1, s: "Part (B): 'any other' के बदले 'any' का प्रयोग होगा। दिल्ली पाकिस्तान का हिस्सा नहीं है, इसलिए 'Any other' (अपने ही समूह में तुलना) गलत है। 'Any metropolis of Pakistan' सही है।" },
+    { t: "All your attempts (A) / are daring (B) / but this one is certainly (C) / the more daring. (D) / No Error (E)", a: 3, s: "Part (D): 'more' के बदले 'most' का प्रयोग होगा। 'All' (सब) में से तुलना के लिए Superlative Degree चाहिए।" },
+    { t: "This is the (A) / more difficult sum, (B) / I have ever solved (C) / within five minutes. (D) / No Error (E)", a: 1, s: "Part (B): 'more' के बदले 'most' का प्रयोग होगा। 'Ever solved' से पता चलता है कि यह अब तक का सबसे कठिन प्रश्न है।" },
+    { t: "There is no one (A) / whom I esteem (B) / highly than (C) / your mother and father. (D) / No Error (E)", a: 2, s: "Part (C): 'highly' के बदले 'higher' का प्रयोग होगा। 'Than' के साथ Comparative Degree चाहिए।" },
+    { t: "He failed to find (A) / out the solution to all the problems (B) / despite his thoroughly (C) / study of the book. (D) / No Error (E)", a: 2, s: "Part (C): 'thoroughly' के बदले 'thorough' का प्रयोग होगा। 'Study' (Noun) के लिए Adjective (thorough) चाहिए, न कि Adverb (thoroughly)।" },
+    { t: "Science has given (A) / us a lot, yet (B) / life is becoming (C) / more and more painful. (D) / No Error (E)", a: 4, s: "No Error. वाक्य शुद्ध है।" },
+    { t: "Ramesh is as good, (A) / if not better than all the (B) / members of the club (C) / which is known as the Lions Club. (D) / No Error (E)", a: 0, s: "Part (A): 'as good' के बाद 'as' का प्रयोग होगा। 'As good as' (Positive) और 'Better than' (Comparative) का सही Structure होना चाहिए।" },
+    { t: "He felt happily (A) / to learn that his (B) / younger brother had got (C) / a prestigious job in the Bank. (D) / No Error (E)", a: 0, s: "Part (A): 'happily' के बदले 'happy' का प्रयोग होगा। Feel, seem, look आदि Copula Verbs हैं जो Adjective लेते हैं, Adverb नहीं।" },
+    { t: "The Principal has great power (A) / of making some useful (B) / plans but the professors (C) / have even greatest ability to foil them. (D) / No Error (E)", a: 3, s: "Part (D): 'greatest' के बदले 'greater' का प्रयोग होगा। यहाँ तुलना Principal और Professors के बीच है (दो पक्ष), इसलिए Comparative Degree सही है।" }
+];
+
+let curQ = 0, qList = [], uAns = {}, sub = false, tmr;
+
+function start(set) {
+    document.getElementById('start').style.display = 'none';
+    let s = set==1 ? 0 : 25;
+    let e = set==1 ? 25 : db.length;
+    qList = db.slice(s, e);
+    
+    // Build Palette
+    let h = '';
+    qList.forEach((_, i) => h += `<div class="pal-btn" id="p${i}" onclick="jump(${i})">${i+1}</div>`);
+    document.getElementById('pal').innerHTML = h;
+
+    load(0);
+    
+    // Timer
+    let t = 900;
+    tmr = setInterval(() => {
+        t--;
+        let m = Math.floor(t/60).toString().padStart(2,'0');
+        let s = (t%60).toString().padStart(2,'0');
+        document.getElementById('time').innerText = m+':'+s;
+        if(t<=0) submit();
+    }, 1000);
+}
+
+function load(i) {
+    curQ = i;
+    let d = qList[i];
+    
+    // Highlight Text
+    let txt = d.t.replace(/\(([A-E])\)/g, '<span class="marker">($1)</span>');
+    document.getElementById('q-txt').innerHTML = txt;
+    document.getElementById('q-idx').innerText = 'Q' + (i+1);
+
+    // Options: A, B, C, D, E (Standard)
+    let opts = ["(A)", "(B)", "(C)", "(D)", "No Error (E)"];
+    
+    let h = '';
+    opts.forEach((l, idx) => {
+        let sel = uAns[i] === idx ? 'selected' : '';
+        let style = '';
+        if(sub) {
+            if(idx === d.a) style = 'border-color:#0acf83; background:#e5fbf2;';
+            else if(sel && idx !== d.a) style = 'border-color:#f25050; background:#fef1f1;';
+        }
+        h += `<div class="opt ${sel}" style="${style}" onclick="pick(${idx})">
+            <div class="circle"></div><span>${l}</span>
+        </div>`;
+    });
+    document.getElementById('opts').innerHTML = h;
+
+    // Palette highlight
+    document.querySelectorAll('.pal-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('p'+i).classList.add('active');
+
+    // Solution
+    if(sub) {
+        document.getElementById('sol').style.display = 'block';
+        document.getElementById('sol-txt').innerText = d.s;
+    } else {
+        document.getElementById('sol').style.display = 'none';
+    }
+}
+
+function pick(o) {
+    if(sub) return;
+    uAns[curQ] = o;
+    document.getElementById('p'+curQ).classList.add('done');
+    load(curQ);
+}
+
+function nav(d) {
+    let n = curQ + d;
+    if(n >= 0 && n < qList.length) load(n);
+}
+
+function jump(i) { load(i); }
+
+function submit() {
+    clearInterval(tmr);
+    sub = true;
+    document.querySelector('.submit').style.display = 'none';
+    let sc = 0;
+    qList.forEach((q, i) => {
+        if(uAns[i] === q.a) sc += 1;
+        else if(uAns[i] !== undefined) sc -= 0.25;
+    });
+    alert('Score: ' + sc);
+    load(curQ);
+}
+</script>
+</body>
+</html>

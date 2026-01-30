@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Time & Tenses Mock - THE SSC SCHOLARS</title>
+<style>
+    :root { --blue: #007bff; --green: #0acf83; --red: #f25050; --bg: #f2f3f5; }
+    * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body { margin: 0; background: var(--bg); height: 100vh; display: flex; flex-direction: column; }
+
+    /* Header */
+    header { background: #fff; padding: 0 20px; height: 60px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; }
+    .logo { font-weight: 800; color: #333; }
+    .timer { background: #eef2f8; padding: 5px 10px; border-radius: 4px; font-weight: bold; }
+    .submit { background: var(--green); color: white; border: none; padding: 8px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+
+    /* Main */
+    .container { display: flex; flex: 1; overflow: hidden; }
+    .q-panel { flex: 1; background: #fff; margin: 15px; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    
+    .q-header { padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; font-weight: bold; }
+    .q-body { flex: 1; padding: 20px; overflow-y: auto; }
+    .q-text { font-size: 1.15rem; margin-bottom: 20px; line-height: 1.6; color: #2d3748; }
+    .marker { color: var(--blue); font-weight: bold; background: #ebf8ff; padding: 2px 5px; border-radius: 4px; font-size: 0.9em; margin: 0 2px; }
+
+    /* Options */
+    .opts { display: flex; flex-direction: column; gap: 10px; }
+    .opt { display: flex; align-items: center; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+    .opt:hover { background: #f7fafc; border-color: #cbd5e0; }
+    .opt.selected { border-color: var(--blue); background: #ebf8ff; }
+    .circle { width: 18px; height: 18px; border: 2px solid #a0aec0; border-radius: 50%; margin-right: 15px; position: relative; }
+    .opt.selected .circle { border-color: var(--blue); }
+    .opt.selected .circle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 8px; height: 8px; background: var(--blue); border-radius: 50%; }
+
+    /* Solution */
+    .sol-box { margin-top: 20px; background: #ebf8ff; border: 1px solid #bee3f8; border-radius: 6px; padding: 15px; display: none; }
+    .sol-title { font-weight: bold; color: #2b6cb0; margin-bottom: 5px; }
+
+    /* Footer */
+    .footer { padding: 15px; border-top: 1px solid #eee; display: flex; justify-content: space-between; }
+    .btn { padding: 8px 20px; border: 1px solid #ccc; background: white; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    .btn-save { background: var(--blue); color: white; border: none; }
+
+    /* Sidebar */
+    .sidebar { width: 280px; background: white; border-left: 1px solid #ddd; display: flex; flex-direction: column; }
+    .pal-grid { padding: 15px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; overflow-y: auto; }
+    .pal-btn { height: 35px; border: 1px solid #ddd; background: white; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #555; }
+    .pal-btn.active { border-color: var(--blue); color: var(--blue); border-width: 2px; }
+    .pal-btn.done { background: var(--green); color: white; border-color: var(--green); }
+
+    /* Start Screen */
+    #start { position: fixed; inset: 0; background: rgba(255,255,255,0.98); z-index: 100; display: flex; align-items: center; justify-content: center; }
+    .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 400px; text-align: center; border: 1px solid #ddd; }
+    .start-btn { width: 100%; padding: 15px; margin: 10px 0; background: white; border: 2px solid var(--blue); color: var(--blue); font-weight: bold; border-radius: 8px; cursor: pointer; text-align: left; }
+    .start-btn:hover { background: var(--blue); color: white; }
+
+    @media(max-width:768px) { .sidebar{display:none;} .container{flex-direction:column;} }
+</style>
+</head>
+<body>
+
+<div id="start">
+    <div class="card">
+        <h2>Chapter 5: Time & Tenses</h2>
+        <p>Mirror of Common English</p>
+        <button class="start-btn" onclick="start(1)">Set 1 (Q1-25)</button>
+        <button class="start-btn" onclick="start(2)">Set 2 (Q26-52)</button>
+    </div>
+</div>
+
+<header>
+    <div class="logo">THE SSC SCHOLARS OFFICIAL</div>
+    <div class="timer" id="time">15:00</div>
+    <button class="submit" onclick="submit()">SUBMIT</button>
+</header>
+
+<div class="container">
+    <div class="q-panel">
+        <div class="q-header">
+            <span id="q-idx">Q1</span>
+            <span>+1.0 / -0.25</span>
+        </div>
+        <div class="q-body">
+            <div class="q-text" id="q-txt"></div>
+            <div class="opts" id="opts"></div>
+            <div class="sol-box" id="sol">
+                <div class="sol-title">Solution</div>
+                <div id="sol-txt"></div>
+            </div>
+        </div>
+        <div class="footer">
+            <button class="btn" onclick="nav(-1)">Prev</button>
+            <button class="btn btn-save" onclick="nav(1)">Save & Next</button>
+        </div>
+    </div>
+    <div class="sidebar">
+        <div style="padding:15px;border-bottom:1px solid #eee;font-weight:bold">Questions</div>
+        <div class="pal-grid" id="pal"></div>
+    </div>
+</div>
+
+<script>
+const db = [
+    // SET 1
+    { t: "When you will find out (A) / any solution to this problem (B) / you will become able (C) / to finalise the project. (D) / No Error (E)", a: 0, s: "Part (A): 'you will find out' के बदले 'you find out' का प्रयोग होगा। Conditional Clause (When...) में Future Tense का प्रयोग नहीं होता।" },
+    { t: "Whenever (A) / you are coming here, (B) / you bring a lot of (C) / sweets for me. (D) / No Error (E)", a: 1, s: "Part (B): 'you are coming' के बदले 'you come' होगा। यह वर्तमान की आदत (Present Habit) है, इसलिए Present Indefinite का प्रयोग होगा।" },
+    { t: "It is appearing to me (A) / that you are plotting (B) / against your (C) / friends and their parents. (D) / No Error (E)", a: 0, s: "Part (A): 'It is appearing' के बदले 'It appears' होगा। Appear का अर्थ जब 'प्रतीत होना' (seem) हो, तो Continuous Tense नहीं होता।" },
+    { t: "The old man who is sitting in that room (A) / lived here for (B) / more than a month but he has never created (C) / any problem. (D) / No Error (E)", a: 1, s: "Part (B): 'lived' के बदले 'has lived' या 'has been living' होगा क्योंकि वाक्य का भाव Present का है और 'for' लगा है।" },
+    { t: "A mysogynist is a person (A) / who is hating woman (B) / but a philogynist is a person (C) / who loves woman. (D) / No Error (E)", a: 1, s: "Part (B): 'who is hating' के बदले 'who hates' होगा। Universal truth या स्वभाव बताने के लिए Indefinite Tense का प्रयोग होता है।" },
+    { t: "The secret of his good (A) / health lies in the fact that (B) / he is getting up before sunrise (C) / and has a two mile walk every morning. (D) / No Error (E)", a: 2, s: "Part (C): 'he is getting up' के बदले 'he gets up' होगा। (Present Habit)।" },
+    { t: "Now-a-days (A) / he teaches physics (B) / becuase the teacher of (C) / physics has been absenting himself for a month. (D) / No Error (E)", a: 1, s: "Part (B): 'he teaches' के बदले 'he is teaching' होगा। (Temporary action)।" },
+    { t: "He seems to be happy (A) / because his parents (B) / had come from London (C) / to live with him. (D) / No Error (E)", a: 2, s: "Part (C): 'had come' के बदले 'have come' होगा। पूरा वाक्य Present भाव में है।" },
+    { t: "\"It is high time (A) / you are starting (B) / this work,\" (C) / my friend said to me. (D) / No Error (E)", a: 1, s: "Part (B): 'you are starting' के बदले 'you started' होगा। It is high time + Past Indefinite का प्रयोग होता है।" },
+    { t: "I have come to know that your (A) / father has died (B) / last week. (C) / No Error (D) / (E)", a: 1, s: "Part (B): 'has died' के बदले 'died' होगा। 'Last week' के साथ Past Indefinite का प्रयोग होता है।" },
+    { t: "Many of my friends (A) / wished to come here (B) / today but (C) / none of them arrived yet. (D) / No Error (E)", a: 3, s: "Part (D): 'arrived' के बदले 'has arrived' होगा। 'Yet' के साथ Present Perfect का प्रयोग होता है।" },
+    { t: "She says (A) / that she will take (B) / her umbrella (C) / in case it will rain. (D) / No Error (E)", a: 3, s: "Part (D): 'it will rain' के बदले 'it rains' होगा। In case के बाद Future Tense नहीं लगता।" },
+    { t: "I will let you know (A) / as soon as I will get (B) / any information (C) / about your promotion. (D) / No Error (E)", a: 1, s: "Part (B): 'will get' के बदले 'get' होगा। As soon as के बाद Present Indefinite आता है।" },
+    { t: "When I will be thirty (A) / most of my friends (B) / will be above (C) / thirty five, be sure. (D) / No Error (E)", a: 0, s: "Part (A): 'When I will be' के बदले 'When I am' होगा।" },
+    { t: "This is, indeed, (A) / the first time in my life that (B) / I hear (C) / such an interesting story. (D) / No Error (E)", a: 2, s: "Part (C): 'I hear' के बदले 'I have heard' होगा। 'This is the first time' के बाद Present Perfect आता है।" },
+    { t: "Before the alarm (A) / had stopped ringing (B) / Veera had pulled up (C) / the shade. (D) / No Error (E)", a: 1, s: "Part (B): 'had stopped' के बदले 'stopped' होगा। Before वाले clause में Past Indefinite और Main clause में Past Perfect लगता है।" },
+    { t: "I have been knowing (A) / him for ten years (B) / but I don't know (C) / where he lives. (D) / No Error (E)", a: 0, s: "Part (A): 'have been knowing' के बदले 'have known' होगा। Know का प्रयोग Continuous Tense में नहीं होता।" },
+    { t: "He uses to study (A) / at least till ten o'clock (B) / at night and then (C) / he goes to bed. (D) / No Error (E)", a: 0, s: "Part (A): 'He uses to study' के बदले 'He studies' होगा। Present habit के लिए 'uses to' गलत है।" },
+    { t: "If he had a few hours to spare, (A) / he would spend (B) / them (C) / in a public library. (D) / No Error (E)", a: 4, s: "No Error. यह Past Condition है (If + Sub + V2, ... would + V1)।" },
+    { t: "All the flowers (A) / in his garden will surely die (B) / before the rains (C) / will fall. (D) / No Error (E)", a: 3, s: "Part (D): 'will fall' के बदले 'fall' होगा। Before clause में Present Indefinite।" },
+    { t: "If I would have done this, (A) / I would have done wrong (B) / and would have disappointed (C) / many of my friends. (D) / No Error (E)", a: 0, s: "Part (A): 'If I would have done' के बदले 'If I had done' होगा। (Past Conditional)।" },
+    { t: "If she had told me that (A) / her husband never lived (B) / within his means, I would not (C) / have lent him the money. (D) / No Error (E)", a: 4, s: "No Error. वाक्य सही है।" },
+    { t: "I wish (A) / he saw you (B) / when you were (C) / living in England. (D) / No Error (E)", a: 1, s: "Part (B): 'saw' के बदले 'had seen' होगा। Past की unfulfilled wish के लिए Past Perfect का प्रयोग होता है।" },
+    { t: "The judge had not given (A) / any dicision (B) / until he had (C) / studied the case. (D) / No Error (E)", a: 0, s: "Part (A): 'had not given' के बदले 'did not give' होगा। (जो काम बाद में हुआ वह Past Indefinite में)।" },
+    { t: "I lived (A) / here since 1980, (B) / therefore I know everything (C) / about this city. (D) / No Error (E)", a: 0, s: "Part (A): 'lived' के बदले 'have lived' होगा। Since के साथ Perfect Tense।" },
+
+    // SET 2
+    { t: "I have been (A) / working for this (B) / organisation for (C) / the last ten years. (D) / No Error (E)", a: 4, s: "No Error. Present Perfect Continuous + for time." },
+    { t: "If we had Mohan (A) / in our team, we (B) / would have won the match (C) / against your team. (D) / No Error (E)", a: 0, s: "Part (A): 'we had Mohan' के बदले 'we had had Mohan' होगा। (Past Perfect for past unfulfilled condition)।" },
+    { t: "Radha came (A) / to the meeting (B) / much later (C) / than I expect. (D) / No Error (E)", a: 3, s: "Part (D): 'I expect' के बदले 'I had expected' होगा। (Past of the Past)।" },
+    { t: "If I was you (A) / I would have told (B) / the Chairman to keep (C) / his mouth shut. (D) / No Error (E)", a: 0, s: "Part (A): 'was' के बदले 'were' होगा। (Imaginary Condition)।" },
+    { t: "I want you to (A) / pick up the box (B) / of eggs gently and (C) / kept it in the corner carefully. (D) / No Error (E)", a: 3, s: "Part (D): 'kept' के बदले 'keep' होगा। 'to pick... and keep' (Infinitive)।" },
+    { t: "The victim tried to tell us (A) / what has happened (B) / but his words (C) / were not audible. (D) / No Error (E)", a: 1, s: "Part (B): 'has happened' के बदले 'had happened' होगा। (Past Reporting)।" },
+    { t: "We got (A) / everything ready for all of them long (B) / before they arrived. (C) / No Error (D) / (E)", a: 0, s: "Part (A): 'We got' के बदले 'We had got' होगा। (Past Perfect)।" },
+    { t: "She was with (A) / me uptil now, (B) / so don't rebuke her (C) / for getting late. (D) / No Error (E)", a: 0, s: "Part (A): 'was' के बदले 'has been' होगा। 'Uptil now' के साथ Perfect Tense।" },
+    { t: "I have been adoring (A) / her for (B) / the voice with (C) / which she is gifted. (D) / No Error (E)", a: 0, s: "Part (A): 'have been adoring' के बदले 'have adored' होगा। Adore का Continuous नहीं बनता।" },
+    { t: "Had he come (A) / even a moment earlier, (B) / he would have (C) / found me there. (D) / No Error (E)", a: 4, s: "No Error. Had + Sub + V3 ... would have + V3." },
+    { t: "Many observations indicate (A) / that the number of the drug (B) / addicts is grew (C) / day by day. (D) / No Error (E)", a: 2, s: "Part (C): 'is grew' के बदले 'is growing' होगा। (Continuous process)।" },
+    { t: "Newspapers told (A) / us about the events (B) / that happen (C) / all over the world. (D) / No Error (E)", a: 0, s: "Part (A): 'told' के बदले 'tell' होगा। (General Truth)।" },
+    { t: "\"Here is coming (A) / my friend!\", said Manju when (B) / she was anxious. (C) / No Error (D) / (E)", a: 0, s: "Part (A): 'Here is coming' के बदले 'Here comes' होगा। Here/There से शुरू होने वाले Exclamatory वाक्यों में Simple Present होता है।" },
+    { t: "He advised me (A) / to do as he did (B) / but I did not pay any attention (C) / to his advice. (D) / No Error (E)", a: 4, s: "No Error. वाक्य सही है।" },
+    { t: "By this time next year he (A) / has had (B) / settled himself (C) / in London. (D) / No Error (E)", a: 1, s: "Part (B): 'has had' के बदले 'will have' होगा। 'By this time next year' Future Perfect को दर्शाता है।" },
+    { t: "It is about time (A) / you have taken (B) / you children (C) / to shcool. (D) / No Error (E)", a: 1, s: "Part (B): 'you have taken' के बदले 'you took' होगा। It is time/about time + Past Indefinite।" },
+    { t: "I had hoped (A) / that I would see (B) / you the other day, but (C) / unfortunately I fell ill. (D) / No Error (E)", a: 4, s: "No Error. I had hoped (Unfulfilled hope) सही है।" },
+    { t: "The thief was caught (A) / after he has disposed of (B) / the stolen goods. (C) / No Error (D) / (E)", a: 1, s: "Part (B): 'has disposed' के बदले 'had disposed' होगा। After के बाद Past Perfect (जब Main clause Past Indefinite में हो)।" },
+    { t: "Sushma arrived here, (A) / did all the preparations (B) / and then has called (C) / on one of her intimate friends. (D) / No Error (E)", a: 2, s: "Part (C): 'has called' के बदले 'called' होगा। पूरा वाक्य Past Narrative है।" },
+    { t: "I could not recall (A) / what she has told (B) / me about her (C) / concern with Moti. (D) / No Error (E)", a: 1, s: "Part (B): 'has told' के बदले 'had told' होगा। (Past of Past)।" },
+    { t: "That two and two (A) / always made (B) / four cannot (C) / be doubted. (D) / No Error (E)", a: 1, s: "Part (B): 'made' के बदले 'make' या 'makes' होगा। (Universal Truth)।" },
+    { t: "Nobody knows (A) / when death (B) / will knock at (C) / his door. (D) / No Error (E)", a: 4, s: "No Error. वाक्य सही है।" },
+    { t: "Dipu hopes to become (A) / an officer after (B) / he will complete (C) / his higher education. (D) / No Error (E)", a: 2, s: "Part (C): 'he will complete' के बदले 'he completes' या 'he has completed' होगा। (Time clause)।" },
+    { t: "Meenu along with her parents (A) / is going to Mumbai (B) / tonight because her eldest brother (C) / is ill there. (D) / No Error (E)", a: 4, s: "No Error. वाक्य सही है।" },
+    { t: "My friend (A) / said to me, (B) / \"When have (C) / you come here?\" (D) / No Error (E)", a: 2, s: "Part (C): 'have' के बदले 'did' होगा। Past event के लिए When के साथ Past Indefinite आता है।" },
+    { t: "He would not have (A) / done all this if he had not been (B) / instigated by his wife. (C) / No Error (D) / (E)", a: 4, s: "No Error. Conditional sentence सही है।" },
+    { t: "The teacher said (A) / to us that we (B) / should stay at home (C) / if it rains. (D) / No Error (E)", a: 3, s: "Part (D): 'rains' के बदले 'rained' होगा। Indirect Speech (Past) में Tense बदलता है।" }
+];
+
+let curQ = 0, qList = [], uAns = {}, sub = false, tmr;
+
+function start(set) {
+    document.getElementById('start').style.display = 'none';
+    let s = set==1 ? 0 : 25;
+    let e = set==1 ? 25 : db.length;
+    qList = db.slice(s, e);
+    
+    // Build Palette
+    let h = '';
+    qList.forEach((_, i) => h += `<div class="pal-btn" id="p${i}" onclick="jump(${i})">${i+1}</div>`);
+    document.getElementById('pal').innerHTML = h;
+
+    load(0);
+    
+    // Timer
+    let t = 900;
+    tmr = setInterval(() => {
+        t--;
+        let m = Math.floor(t/60).toString().padStart(2,'0');
+        let s = (t%60).toString().padStart(2,'0');
+        document.getElementById('time').innerText = m+':'+s;
+        if(t<=0) submit();
+    }, 1000);
+}
+
+function load(i) {
+    curQ = i;
+    let d = qList[i];
+    
+    // Highlight Text
+    let txt = d.t.replace(/\(([A-E])\)/g, '<span class="marker">($1)</span>');
+    document.getElementById('q-txt').innerHTML = txt;
+    document.getElementById('q-idx').innerText = 'Q' + (i+1);
+
+    // Determine Options: If text has "(E)", show 5 options, else 4
+    let hasE = d.t.includes("(E)");
+    let opts = ["(A)", "(B)", "(C)", "(D)"];
+    if(hasE) opts.push("No Error (E)");
+    else opts[3] = "No Error (D)"; // Replace D with No Error label if 4 opts
+
+    let h = '';
+    opts.forEach((l, idx) => {
+        let sel = uAns[i] === idx ? 'selected' : '';
+        let style = '';
+        if(sub) {
+            if(idx === d.a) style = 'border-color:#0acf83; background:#e5fbf2;';
+            else if(sel && idx !== d.a) style = 'border-color:#f25050; background:#fef1f1;';
+        }
+        h += `<div class="opt ${sel}" style="${style}" onclick="pick(${idx})">
+            <div class="circle"></div><span>${l}</span>
+        </div>`;
+    });
+    document.getElementById('opts').innerHTML = h;
+
+    // Palette highlight
+    document.querySelectorAll('.pal-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('p'+i).classList.add('active');
+
+    // Solution
+    if(sub) {
+        document.getElementById('sol').style.display = 'block';
+        document.getElementById('sol-txt').innerText = d.s;
+    } else {
+        document.getElementById('sol').style.display = 'none';
+    }
+}
+
+function pick(o) {
+    if(sub) return;
+    uAns[curQ] = o;
+    document.getElementById('p'+curQ).classList.add('done');
+    load(curQ);
+}
+
+function nav(d) {
+    let n = curQ + d;
+    if(n >= 0 && n < qList.length) load(n);
+}
+
+function jump(i) { load(i); }
+
+function submit() {
+    clearInterval(tmr);
+    sub = true;
+    document.querySelector('.submit').style.display = 'none';
+    let sc = 0;
+    qList.forEach((q, i) => {
+        if(uAns[i] === q.a) sc += 1;
+        else if(uAns[i] !== undefined) sc -= 0.25;
+    });
+    alert('Score: ' + sc);
+    load(curQ);
+}
+</script>
+</body>
+</html>
