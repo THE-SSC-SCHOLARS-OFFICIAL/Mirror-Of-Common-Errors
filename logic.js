@@ -1,50 +1,80 @@
-/* logic.js - Universal Fixer for All Mock Tests */
+/* logic.js - Fixes Colors for Options & Palette (Green=Right, Red=Wrong) */
 document.addEventListener("DOMContentLoaded", function() {
     
-    // --- 1. Universal CSS Injection (सही/गलत रंगों के लिए) ---
+    // --- 1. Universal CSS (Option & Palette Colors) ---
     const style = document.createElement('style');
     style.innerHTML = `
-        /* === Main Options Colors === */
-        /* Correct (Green) */
-        .opt.correct, .option-item.correct { border-color: #28a745 !important; background: #d4edda !important; }
-        .opt.correct .circle, .option-item.correct .radio-circle { border-color: #28a745 !important; }
-        .opt.correct .circle::after, .option-item.correct .radio-circle::after { background: #28a745 !important; content: ''; position: absolute; top: 3px; left: 3px; width: 8px; height: 8px; border-radius: 50%; }
+        /* === OPTIONS COLORS (After Submit) === */
         
-        /* Wrong (Red) */
-        .opt.wrong, .option-item.wrong { border-color: #dc3545 !important; background: #f8d7da !important; }
-        .opt.wrong .circle, .option-item.wrong .radio-circle { border-color: #dc3545 !important; }
-        .opt.wrong .circle::after, .option-item.wrong .radio-circle::after { background: #dc3545 !important; content: ''; position: absolute; top: 3px; left: 3px; width: 8px; height: 8px; border-radius: 50%; }
+        /* Correct Answer = GREEN */
+        .opt.correct, .option-item.correct { 
+            border-color: #28a745 !important; 
+            background-color: #d4edda !important; 
+            color: #155724 !important;
+        }
+        .opt.correct .circle, .option-item.correct .radio-circle { 
+            border-color: #28a745 !important; 
+        }
+        .opt.correct .circle::after, .option-item.correct .radio-circle::after { 
+            background: #28a745 !important; 
+            content: ''; position: absolute; top: 3px; left: 3px; width: 8px; height: 8px; border-radius: 50%; 
+        }
+        
+        /* Wrong Answer = RED */
+        .opt.wrong, .option-item.wrong { 
+            border-color: #dc3545 !important; 
+            background-color: #f8d7da !important; 
+            color: #721c24 !important;
+        }
+        .opt.wrong .circle, .option-item.wrong .radio-circle { 
+            border-color: #dc3545 !important; 
+        }
+        .opt.wrong .circle::after, .option-item.wrong .radio-circle::after { 
+            background: #dc3545 !important; 
+            content: ''; position: absolute; top: 3px; left: 3px; width: 8px; height: 8px; border-radius: 50%; 
+        }
 
-        /* Selected (Blue) - Before Submit */
-        .opt.selected, .option-item.selected { border-color: #007bff !important; background: #ebf8ff !important; }
-        .opt.selected .circle, .option-item.selected .radio-circle { border-color: #007bff !important; }
-        .opt.selected .circle::after, .option-item.selected .radio-circle::after { background: #007bff !important; content: ''; width: 8px; height: 8px; border-radius: 50%; position: absolute; top: 3px; left: 3px; }
+        /* Selected (Before Submit) = BLUE */
+        .opt.selected, .option-item.selected { 
+            border-color: #007bff !important; 
+            background-color: #ebf8ff !important; 
+        }
         
-        /* === Palette (Sidebar) Colors === */
-        /* Attempted (Blue) */
-        .pal-btn.attempted, .p-btn.attempted { background: #007bff !important; color: white !important; border-color: #007bff !important; }
+        /* === PALETTE (SIDEBAR) COLORS === */
         
-        /* Correct Result (Green) */
-        .pal-btn.correct, .p-btn.correct { background: #28a745 !important; border-color: #28a745 !important; color: white !important; }
+        /* Attempted = BLUE */
+        .pal-btn.attempted, .p-btn.attempted { 
+            background: #007bff !important; 
+            color: white !important; 
+            border-color: #007bff !important; 
+        }
         
-        /* Wrong Result (Red) */
-        .pal-btn.wrong, .p-btn.wrong { background: #dc3545 !important; border-color: #dc3545 !important; color: white !important; }
+        /* Correct Result = GREEN */
+        .pal-btn.correct, .p-btn.correct { 
+            background: #28a745 !important; 
+            border-color: #28a745 !important; 
+            color: white !important; 
+        }
+        
+        /* Wrong Result = RED */
+        .pal-btn.wrong, .p-btn.wrong { 
+            background: #dc3545 !important; 
+            border-color: #dc3545 !important; 
+            color: white !important; 
+        }
     `;
     document.head.appendChild(style);
 
 
-    // --- 2. Logic Detection & Override (Smart Fixer) ---
+    // --- 2. Logic Override (Detects File Type & Fixes Logic) ---
 
-    // TYPE A FILES: (Verbs, Adverb, Voice, Narration, Conjunction, Superfluous, Tense)
-    // पहचान: इनमें 'load', 'pick' और 'submit' फंक्शन हैं।
+    // TYPE A: (Verbs, Voice, Narration etc. -> uses 'load' & 'pick')
     if (typeof window.load === 'function' && typeof window.submit === 'function') {
         
-        // Override 'load' 
         window.load = function(i) {
             curQ = i;
             let d = qList[i];
             
-            // Text
             let txt = d.t.replace(/\(([A-E])\)/g, '<span class="marker">($1)</span>');
             document.getElementById('q-txt').innerHTML = txt;
             document.getElementById('q-idx').innerText = 'Q' + (i+1);
@@ -57,11 +87,11 @@ document.addEventListener("DOMContentLoaded", function() {
             let h = '';
             opts.forEach((l, idx) => {
                 let classes = "opt";
-                if(uAns[i] === idx) classes += " selected";
+                if(uAns[i] === idx) classes += " selected"; // Blue if selected
                 
                 if(sub) {
-                    if(idx === d.a) classes += " correct";
-                    else if(uAns[i] === idx && idx !== d.a) classes += " wrong";
+                    if(idx === d.a) classes += " correct"; // Right Answer -> Green
+                    else if(uAns[i] === idx && idx !== d.a) classes += " wrong"; // Your Wrong Answer -> Red
                 }
 
                 h += `<div class="${classes}" onclick="pick(${idx})">
@@ -70,7 +100,6 @@ document.addEventListener("DOMContentLoaded", function() {
             });
             document.getElementById('opts').innerHTML = h;
 
-            // Palette Active State
             document.querySelectorAll('.pal-btn').forEach(b => b.classList.remove('active'));
             if(document.getElementById('p'+i)) document.getElementById('p'+i).classList.add('active');
 
@@ -82,16 +111,14 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         };
 
-        // Override 'pick' (Click करते ही Blue)
         window.pick = function(o) {
             if(sub) return;
             uAns[curQ] = o;
             let btn = document.getElementById('p'+curQ);
-            if(btn) btn.classList.add('attempted'); 
+            if(btn) btn.classList.add('attempted'); // Click -> Blue
             load(curQ);
         };
 
-        // Override 'submit' (Submit के बाद Red/Green)
         window.submit = function() {
             clearInterval(tmr);
             sub = true;
@@ -100,13 +127,13 @@ document.addEventListener("DOMContentLoaded", function() {
             qList.forEach((q, i) => {
                 let btn = document.getElementById('p'+i);
                 if(btn) {
-                    btn.classList.remove('attempted'); // Blue हटाओ
+                    btn.classList.remove('attempted'); // Blue remove
                     if(uAns[i] === q.a) {
                         sc += 1;
-                        btn.classList.add('correct'); // Green लगाओ
+                        btn.classList.add('correct'); // Right -> Green
                     } else if(uAns[i] !== undefined) {
                         sc -= 0.25;
-                        btn.classList.add('wrong'); // Red लगाओ
+                        btn.classList.add('wrong'); // Wrong -> Red
                     }
                 }
             });
@@ -115,11 +142,9 @@ document.addEventListener("DOMContentLoaded", function() {
         };
     }
 
-    // TYPE B FILES: (Articles, Nouns, Pronoun, Subject-Verb, Adjectives)
-    // पहचान: इनमें 'loadQuestion', 'selectOption' और 'submitTest' फंक्शन हैं।
+    // TYPE B: (Articles, Noun, Pronoun etc. -> uses 'loadQuestion' & 'submitTest')
     else if (typeof window.loadQuestion === 'function' && typeof window.submitTest === 'function') {
         
-        // Override 'loadQuestion'
         window.loadQuestion = function(idx) {
             currentIdx = idx;
             const qData = setQuestions[idx];
@@ -137,8 +162,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 if(isSelected) classes += " selected";
                 
                 if(isSubmitted) {
-                    if(i === qData.ans) classes += " correct";
-                    else if(isSelected && i !== qData.ans) classes += " wrong";
+                    if(i === qData.ans) classes += " correct"; // Right Answer -> Green
+                    else if(isSelected && i !== qData.ans) classes += " wrong"; // Your Wrong Answer -> Red
                 }
 
                 return `
@@ -160,19 +185,17 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         };
 
-        // Override 'selectOption' (Click करते ही Blue)
         window.selectOption = function(optIndex) {
             if(isSubmitted) return;
             userAnswers[currentIdx] = optIndex;
             let btn = document.getElementById(`pal-${currentIdx}`);
             if(btn) {
-                btn.classList.remove('answered'); // पुराना क्लास हटाओ
-                btn.classList.add('attempted'); // नया Blue क्लास
+                btn.classList.remove('answered');
+                btn.classList.add('attempted'); // Click -> Blue
             }
             loadQuestion(currentIdx);
         };
 
-        // Override 'submitTest' (Submit के बाद Red/Green)
         window.submitTest = function() {
             clearInterval(timerRef);
             isSubmitted = true;
@@ -185,10 +208,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     btn.classList.remove('attempted', 'answered', 'not-answered');
                     if(userAnswers[i] === q.ans) {
                         score += 1;
-                        btn.classList.add('correct'); // Green
+                        btn.classList.add('correct'); // Right -> Green
                     } else if(userAnswers[i] !== undefined) {
                         score -= 0.25;
-                        btn.classList.add('wrong'); // Red
+                        btn.classList.add('wrong'); // Wrong -> Red
                     }
                 }
             });
